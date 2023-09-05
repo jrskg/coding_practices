@@ -384,7 +384,7 @@ void pascalTriangle(){
 }
 
 int main(){
-    hologramRectangle();
+    // hologramRectangle();
     // invertedHalfPyramid();
     // reversedHalfPyramid();
     // pyramidNumber();
@@ -400,7 +400,7 @@ int main(){
     // hollowDiamondPattern();
     // hollowDiamondRectangle();
     // hollowRhombus();
-    // hollowButterfly();
+    hollowButterfly();
     // pascalTriangle();
     return 0;
 }
