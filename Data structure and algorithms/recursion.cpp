@@ -296,7 +296,6 @@ void quickSort(int *arr, int s, int e){
     int p = partition(arr, s, e);
     quickSort(arr, s, p-1);
     quickSort(arr, p+1, e);
-
 }
 
 void solve(vector<int>arr,vector<int>output, vector<vector<int>>&ans, int i, int size){
@@ -583,28 +582,28 @@ int main(){
 
 
     // string digit = "23";
-    // vector<string> ans;
+     vector<string> ans;
     // string output = "";
     // int index = 0;
     // string map[10] = {"", "","abc","def","ghi","jkl","mno","pgrs","tuv", "wxyz"};
     // phoneKeypadSolve(digit, "", 0, ans, map);
 
-    // string str = "abc";
-    // permutationOfStr(str, 0, ans);
+     string str = "cesni";
+     permutationOfStr(str, 0, ans);
 
-    // for(int i = 0; i < ans.size(); i++){
-    //     cout<<ans[i]<<endl;
-    // }
+     for(int i = 0; i < ans.size(); i++){
+         cout<<ans[i]<<endl;
+     }
 
-    vector<vector<int>> maze = {
-        {1, 0, 0, 0},
-        {1, 1, 0, 1},
-        {1, 1, 0, 0},
-        {0, 1, 1, 1}
-    };
-    vector<string>ans = ratInMaze(maze, 4, 4);
-    for(int i = 0; i < ans.size(); i++){
-        cout<<ans[i]<<endl;
-    }
+    //vector<vector<int>> maze = {
+    //    {1, 0, 0, 0},
+    //    {1, 1, 0, 1},
+    //    {1, 1, 0, 0},
+    //    {0, 1, 1, 1}
+   // };
+    //vector<string>ans = ratInMaze(maze, 4, 4);
+   // for(int i = 0; i < ans.size(); i++){
+    //    cout<<ans[i]<<endl;
+    //}
     return 0;
 }

@@ -64,14 +64,18 @@ int main() {
     // greater();
     // area();
     // volume();
-    int arr[20], size;
-    printf("Enter size : ");
-    scanf("%d", &size);
-    printf("Enter %d numbers : ", size);
-    for(int i = 0; i < size; i++){
-        scanf("%d", &arr[i]);
-    }
-    sortArray(arr, size);
-    printArray(arr, size);
+    // int arr[20], size;
+    // printf("Enter size : ");
+    // scanf("%d", &size);
+    // printf("Enter %d numbers : ", size);
+    // for(int i = 0; i < size; i++){
+    //     scanf("%d", &arr[i]);
+    // }
+    // sortArray(arr, size);
+    // printArray(arr, size);
+    int n;
+    n = printf("Helloo");
+    printf("The return value is : %d\n", n);
+
     return 0;
 }
