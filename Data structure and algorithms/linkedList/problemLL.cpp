@@ -539,29 +539,84 @@ Node* addTwoLinkedList(Node* head1, Node* head2){
     return ansHead;
 }
 
+Node* findMid(Node* head){
+    Node* slow = head;
+    Node* fast = head->next;
+
+    while(fast != NULL && fast->next != NULL){
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+Node* merge(Node* left, Node* right){
+    Node* ans = new Node(-1);
+    Node* temp = ans;
+
+    while(left != NULL && right != NULL){
+        if(left->data < right->data){
+            temp->next = left;
+            temp = left;
+            left = left->next;
+        }else{
+            temp->next = right;
+            temp = right;
+            right = right->next;
+        }
+    }
+    while(left != NULL){
+        temp->next = left;
+        temp = left;
+        left = left->next;
+    }
+    while(right != NULL){
+        temp->next = right;
+        temp = right;
+        right = right->next;
+    }
+    ans = ans->next;
+    return ans;
+}
+Node* mergeSort(Node* head){
+    if(head == NULL || head->next == NULL){
+        return head;
+    }
+    Node* left = head;
+    Node * mid = findMid(head);
+    Node* right = mid->next;
+    mid->next = NULL;
+
+    left = mergeSort(left);
+    right = mergeSort(right);
+
+    return merge(left, right);
+}
 
 int main() {
     Node* node1 = NULL;
     Node* head = node1;
     Node* tail = node1;
-    // insertAtLast(head, tail, 7);
+    insertAtLast(head, tail, 7);
     insertAtLast(head, tail, 2);    
     insertAtLast(head, tail, 4);
     insertAtLast(head, tail, 3);
-    // insertAtLast(head, tail, 2);
-    // insertAtLast(head, tail, 1);
+    insertAtLast(head, tail, 2);
+    insertAtLast(head, tail, 1);
+    printList(head);
+    Node* sorted = mergeSort(head);
+    printList(sorted);
 
 
-    Node* head2 = new Node(5);
-    Node* tail2 = head2;
-    insertAtLast(head2, tail2, 6);
-    insertAtLast(head2, tail2, 4);
+    // Node* head2 = new Node(5);
+    // Node* tail2 = head2;
+    // insertAtLast(head2, tail2, 6);
+    // insertAtLast(head2, tail2, 4);
     // insertAtLast(head2, tail2, 3);
 
-    printList(head);
-    printList(head2);
-    head2 = addTwoLinkedList(head, head2);
-    printList(head2);
+    // printList(head);
+    // printList(head2);
+    // head2 = addTwoLinkedList(head, head2);
+    // printList(head2);
 
 
 

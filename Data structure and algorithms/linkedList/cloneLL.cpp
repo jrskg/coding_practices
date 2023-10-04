@@ -75,7 +75,51 @@ Node* clone(Node* head){
     }
     return cloneHead;
 }
-// TODO create another function to clone with SC O(1)
+
+Node* clone1(Node* head){
+    Node* cloneHead = NULL;
+    Node* cloneTail = NULL;
+    Node* orgNode = head;
+
+    while(orgNode != NULL){
+        insertLast(cloneHead, cloneTail, orgNode->data);
+        orgNode = orgNode->next;
+    }
+
+    orgNode = head;
+    Node* cloneNode = cloneHead;
+    Node* next = NULL;
+    while(orgNode != NULL && cloneNode != NULL){
+        next = orgNode->next;
+        orgNode->next = cloneNode;
+        orgNode = next;
+
+        next = cloneNode->next;
+        cloneNode->next = orgNode;
+        cloneNode = next;
+    }
+
+    orgNode = head;
+    while(orgNode != NULL){
+        if(orgNode->next != NULL){
+            //checking if orgNode->random != NULL
+            orgNode->next->random = orgNode->random ? orgNode->random->next : orgNode->random;
+        }
+        orgNode = orgNode->next->next;
+    }
+
+    orgNode = head;
+    cloneNode = cloneHead;
+    while(orgNode != NULL && cloneNode != NULL){
+        orgNode->next = cloneNode->next;
+        orgNode = orgNode->next;
+        if(orgNode != NULL){
+            cloneNode->next = orgNode->next;
+        }
+        cloneNode = cloneNode->next;
+    }
+    return cloneHead;
+}
 int main() {
 
     Node* head = new Node(1);
@@ -88,9 +132,8 @@ int main() {
     tail->random->next->random = head->next->next;
     printList(head);
 
-    Node* cloned = clone(head);
-
-    printList(cloned);
-    
+    // Node* cloned = clone(head);
+    Node* cloned = clone1(head);
+    printList(cloned);    
     return 0;
 }
