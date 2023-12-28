@@ -434,7 +434,7 @@ vector<int> boundryTraversal(Node* root){
     traverseLeft(root->left, ans);
 
     //taking all the leaf nodes from left and right
-    //you can directly pass root and call the function olny once but i case of single node(root == leaf node) the root will be added again
+    //you can directly pass root and call the function only once but in case of single node(root == leaf node) the root will be added again
     traverseLeafNode(root->left, ans);
     traverseLeafNode(root->right, ans);
 
@@ -445,8 +445,112 @@ vector<int> boundryTraversal(Node* root){
 }
 //code for boundry traversal ends
 
-//TODO:Vertical traversal
+vector<int> verticalTraversal(Node* root){
+    vector<int>ans;
+    if(root == NULL){
+        return ans;
+    }
+    unordered_map<int, vector<int>>ansMap;
+    queue<pair<Node*, int>>q;
+    int maxi = 0, mini = 0;
 
+    //here 0 is horizontal distance
+    q.push(make_pair(root, 0));
+
+    while(!q.empty()){
+        pair<Node*, int>frontNodePair = q.front();
+        q.pop();
+        int hd = frontNodePair.second;
+        Node* front = frontNodePair.first;
+
+        // if(ansMap.find(hd) != ansMap.end()){
+        //     ansMap[hd].push_back(front->data);
+        // }else{
+        //     vector<int>temp;
+        //     temp.push_back(front->data);
+        //     ansMap.insert({hd, temp});
+        // }
+        ansMap[hd].push_back(front->data);
+    
+        if(front->left){
+            q.push(make_pair(front->left, hd-1));
+            mini = min(mini, hd-1);
+        }
+        if(front->right){
+            q.push(make_pair(front->right, hd+1));
+            maxi = max(maxi, hd+1);
+        }
+    }
+
+    for(int i = mini; i <= maxi; i++){
+        for(int j = 0; j < ansMap[i].size(); j++){
+            ans.push_back(ansMap[i][j]);
+        }
+    }
+    return ans;
+}
+
+vector<int> topView(Node *root){
+    vector<int>ans;
+    if(root == NULL){
+        return ans;
+    }
+    
+    unordered_map<int, int>ansMap;
+    queue<pair<Node*, int>>q;
+    q.push(make_pair(root, 0));
+    int maxi = 0, mini = 0;
+       
+    while(!q.empty()){
+        pair<Node*, int>frontPair = q.front();
+        q.pop();
+        int hd = frontPair.second;
+        Node* front = frontPair.first;
+        
+        //when there is no entry then only add in the map
+        if(ansMap.find(hd) == ansMap.end()){
+            ansMap.insert({hd, front->data});
+        }
+        
+        if(front->left){
+            q.push(make_pair(front->left, hd-1));
+            mini = min(mini, hd-1);
+        }
+        if(front->right){
+            q.push(make_pair(front->right, hd+1));
+            maxi = max(maxi, hd+1);
+        }
+    }
+    
+    for(int i = mini; i <= maxi; i++){
+        ans.push_back(ansMap[i]);
+    }
+    return ans;
+}
+
+bool solve(Node* l, Node* r){
+    if(l == NULL && r == NULL){
+        return true;
+    }
+    if(l != NULL && r == NULL){
+        return false;
+    }
+    if(l == NULL && r != NULL){
+        return false;
+    }
+
+    bool case1 = l->data == r->data;
+    bool case2 = solve(l->left, r->right);
+    bool case3 = solve(l->right, r->left);
+
+    return (case1 && case2 && case3);
+}
+bool isSymmetricTree(Node* root){
+    if(root == NULL){
+        return true;
+    }
+    return solve(root->left, root->right);
+}
 
 int main() {
 
@@ -484,11 +588,13 @@ int main() {
     // cout<<"Diameter of tree is : "<<diameter(root)<<endl;
     // cout<<"Tree is balanced or not : "<<isBalanced(root)<<endl;
     // cout<<"Tree is sum tree or not : "<<isSumTree(root)<<endl;
+    cout<<"Tree is symmetric tree or not : "<<isSymmetricTree(root)<<endl;
 
     // vector<int>ans = zigZagTraversal(root);
     // printVector(ans);
 
-    vector<int> ans = boundryTraversal(root);
+    // vector<int> ans = boundryTraversal(root);
+    vector<int> ans = verticalTraversal(root);
     printVector(ans);
  
     return 0;
