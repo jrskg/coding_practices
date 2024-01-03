@@ -496,6 +496,7 @@ vector<int> topView(Node *root){
         return ans;
     }
     
+    //horizontal distance and node value
     unordered_map<int, int>ansMap;
     queue<pair<Node*, int>>q;
     q.push(make_pair(root, 0));
@@ -528,6 +529,105 @@ vector<int> topView(Node *root){
     return ans;
 }
 
+vector<int> bottomView(Node* root){
+    vector<int> ans;
+    if(root == NULL){
+        return ans;
+    }
+
+    //horizontal distance and node value
+    unordered_map<int, int>ansMap;
+    queue<pair<Node*, int>>q;
+    q.push(make_pair(root, 0));
+    int maxi = 0, mini = 0;
+
+    while(!q.empty()){
+        pair<Node*, int> frontPair = q.front();
+        q.pop();
+        int hd = frontPair.second;
+        Node* front = frontPair.first;
+
+        ansMap[hd] = front->data;
+
+        if(front->left){
+            q.push(make_pair(front->left, hd-1));
+            mini = min(mini, hd-1);
+        }
+        if(front->right){
+            q.push(make_pair(front->right, hd+1));
+            maxi = max(maxi, hd+1);
+        }
+    }
+
+    for(int i = mini; i <= maxi; i++){
+        ans.push_back(ansMap[i]);
+    }
+    return ans;
+}
+
+vector<int>leftViewIterative(Node* root){
+    vector<int>ans;
+    if(root == NULL){
+        return ans;
+    }
+    //level and node value
+    unordered_map<int, int>ansMap;
+    queue<pair<Node*, int>>q;
+    q.push(make_pair(root, 0));
+
+    while(!q.empty()){
+        pair<Node*, int>frontPair = q.front();
+        q.pop();
+        int lvl = frontPair.second;
+        Node* front = frontPair.first;
+
+        if(ansMap.find(lvl) == ansMap.end()){
+            ansMap[lvl] = front->data;
+        }
+
+        if(front->left){
+            q.push(make_pair(front->left, lvl+1));
+        }
+        if(front->right){
+            q.push(make_pair(front->right, lvl+1));
+        }
+    }
+    for(int i = 0; i < ansMap.size(); i++){
+        ans.push_back(ansMap[i]);
+    }
+    return ans;
+}
+
+vector<int>rightViewIterative(Node* root){
+    vector<int>ans;
+    if(root == NULL){
+        return ans;
+    }
+    //level and node value
+    unordered_map<int, int>ansMap;
+    queue<pair<Node*, int>>q;
+    q.push(make_pair(root, 0));
+
+    while(!q.empty()){
+        pair<Node*, int>frontPair = q.front();
+        q.pop();
+        int lvl = frontPair.second;
+        Node* front = frontPair.first;
+
+        ansMap[lvl] = front->data;
+        if(front->left){
+            q.push(make_pair(front->left, lvl+1));
+        }
+        if(front->right){
+            q.push(make_pair(front->right, lvl+1));
+        }
+    }
+    for(int i = 0; i < ansMap.size(); i++){
+        ans.push_back(ansMap[i]);
+    }
+    return ans;
+}
+
 bool solve(Node* l, Node* r){
     if(l == NULL && r == NULL){
         return true;
@@ -550,6 +650,30 @@ bool isSymmetricTree(Node* root){
         return true;
     }
     return solve(root->left, root->right);
+}
+
+Node* lowestCommontAncestor(Node* root, int n1, int n2){
+    if(root == NULL){
+        return NULL;
+    }
+
+    if(root->data == n1 || root->data == n2){
+        return root;
+    }
+
+    Node* left = lowestCommontAncestor(root->left, n1, n2);
+    Node* right = lowestCommontAncestor(root->right, n1, n2);
+
+    if(left && right){
+        return root;
+    }
+    else if(left && right == NULL){
+        return left;
+    }
+    else if(left == NULL && right){
+        return right;
+    }
+    return NULL;
 }
 
 int main() {
@@ -588,14 +712,25 @@ int main() {
     // cout<<"Diameter of tree is : "<<diameter(root)<<endl;
     // cout<<"Tree is balanced or not : "<<isBalanced(root)<<endl;
     // cout<<"Tree is sum tree or not : "<<isSumTree(root)<<endl;
-    cout<<"Tree is symmetric tree or not : "<<isSymmetricTree(root)<<endl;
+    // cout<<"Tree is symmetric tree or not : "<<isSymmetricTree(root)<<endl;
 
     // vector<int>ans = zigZagTraversal(root);
     // printVector(ans);
 
     // vector<int> ans = boundryTraversal(root);
-    vector<int> ans = verticalTraversal(root);
-    printVector(ans);
+    // vector<int> ans = verticalTraversal(root);
+    // printVector(ans);
+
+
+    int n1, n2;
+    cout<<"Enter n1 and n2 : ";
+    cin>>n1>>n2;
+    Node* lca = lowestCommontAncestor(root, n1, n2);
+    if(lca){
+        cout<<"The LCA is : "<<lca->data<<endl;
+    }else{
+        cout<<"LCA not found"<<endl;
+    }
  
     return 0;
 }
