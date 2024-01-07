@@ -676,6 +676,59 @@ Node* lowestCommontAncestor(Node* root, int n1, int n2){
     return NULL;
 }
 
+void solveCount(Node* root, int k, int & count, vector<int> path){
+    if(root == NULL){
+        return;
+    }
+    path.push_back(root->data);
+    solveCount(root->left, k, count, path);
+    solveCount(root->right, k, count, path);
+
+    int sum = 0;
+    for(int i = path.size()-1; i >= 0; i--){
+        sum += path[i];
+        if(sum == k){
+            count++;
+        }
+    }
+    path.pop_back();
+}
+int kPathSum(Node* root, int k){
+    vector<int>path;
+    int count = 0;
+    solveCount(root, k, count, path);
+    return count;
+}
+
+int findPosition(int inorder[], int element, int inorderStart, int inorderEnd){
+    for(int i = inorderStart; i <= inorderEnd; i++){
+        if(inorder[i] == element){
+            return i;
+        }
+    }
+    return -1;
+}
+Node* solveBuildTree(int inorder[], int preorder[], int &index, int inorderStart, int inorderEnd, int n){
+    if(index >= n || inorderStart > inorderEnd){
+        return NULL;
+    } 
+
+    int element = preorder[index++];
+    Node* root = new Node(element);
+    //using map for finding position of element will not work in case of duplicate node so using the function
+    int position = findPosition(inorder, element, inorderStart, inorderEnd);
+
+    root->left = solveBuildTree(inorder, preorder, index, inorderStart, position-1, n);
+    root->right = solveBuildTree(inorder, preorder, index, position+1, inorderEnd, n);
+    return root;
+}
+Node* buildTreeFromInorderAndPreorder(int inorder[], int preorder[], int n){
+    int index = 0;
+    int inorderStart = 0;
+    int inorderEnd = n-1;
+    return solveBuildTree(inorder, preorder, index, inorderStart, inorderEnd, n);
+}
+
 int main() {
 
     Node* root = NULL;
@@ -722,15 +775,18 @@ int main() {
     // printVector(ans);
 
 
-    int n1, n2;
-    cout<<"Enter n1 and n2 : ";
-    cin>>n1>>n2;
-    Node* lca = lowestCommontAncestor(root, n1, n2);
-    if(lca){
-        cout<<"The LCA is : "<<lca->data<<endl;
-    }else{
-        cout<<"LCA not found"<<endl;
-    }
+    // int n1, n2;
+    // cout<<"Enter n1 and n2 : ";
+    // cin>>n1>>n2;
+    // Node* lca = lowestCommontAncestor(root, n1, n2);
+    // if(lca){
+    //     cout<<"The LCA is : "<<lca->data<<endl;
+    // }else{
+    //     cout<<"LCA not found"<<endl;
+    // }
+
+    int count = kPathSum(root, 4);
+    cout<<"The count is : "<<count<<endl;
  
     return 0;
 }
