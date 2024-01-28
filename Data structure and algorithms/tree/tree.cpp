@@ -729,6 +729,107 @@ Node* buildTreeFromInorderAndPreorder(int inorder[], int preorder[], int n){
     return solveBuildTree(inorder, preorder, index, inorderStart, inorderEnd, n);
 }
 
+Node* solveBuildTree1(int inorder[], int postorder[], int &index, int inorderStart, int inorderEnd, int n){
+    if(index < 0 || inorderStart > inorderEnd){
+        return NULL;
+    }
+
+    int element = postorder[index--];
+    Node* root = new Node(element);
+    int position = findPosition(inorder, element, inorderStart, inorderEnd);
+
+    root->right = solveBuildTree1(inorder, postorder, index, position+1, inorderEnd, n);
+    root->left = solveBuildTree1(inorder, postorder, index, inorderStart, position-1, n);
+    return root;
+}
+Node* buildTreeFromInorderAndPostorder(int inorder[], int postorder[], int n){
+    int index = n-1;
+    int inorderStart = 0;
+    int inorderEnd = n-1;
+    return solveBuildTree1(inorder, postorder, index, inorderStart, inorderEnd, n);
+}
+
+// Morris Traversel
+Node* findInorederPred(Node * treeNode){
+    Node * temp = treeNode->left;
+    while(temp->right != NULL && temp->right != treeNode){
+        temp = temp->right;
+    }
+    return temp;
+}
+
+void morrisInorderTraversal(Node* root){
+    Node* curr = root;
+    while(curr != NULL){
+        if(curr->left == NULL){
+            cout<<curr->data<<" ";
+            curr = curr->right;
+        }else{
+            Node* pred = findInorederPred(curr);
+            if(pred->right == NULL){
+                pred->right = curr;
+                curr = curr->left;
+            }else{
+                pred->right = NULL;
+                cout<<curr->data<<" ";
+                curr = curr->right;
+            }
+        }
+    }
+    cout<<endl;
+}
+
+void morrisPreorderTraversal(Node* root){
+    Node* curr = root;
+    while(curr != NULL){
+        if(curr->left == NULL){
+            cout<<curr->data<<" ";
+            curr = curr->right;
+        }else{
+            Node* pred = findInorederPred(curr);
+            if(pred->right == NULL){
+                pred->right = curr;
+                cout<<curr->data<<" ";
+                curr = curr->left;
+            }else{
+                pred->right = NULL;
+                curr = curr->right;
+            }
+        }
+    }
+    cout<<endl;
+}
+
+void morrisPostorderTraversal(Node* root){
+    Node* curr = root;
+    vector<int> res;
+    while(curr != NULL){
+        if(curr->right == NULL){
+            res.push_back(curr->data);
+            curr = curr->left;
+        }else{
+            Node* pred = curr->right;
+            while(pred->left != NULL && pred->left != curr){
+                pred = pred->left;
+            }
+            if(pred->left == NULL){
+                res.push_back(curr->data);
+                pred->left = curr;
+                curr = curr->right;
+            }else{
+                pred->left = NULL;
+                curr = curr->left;
+            }
+        }
+    }
+
+    //printing vector in reverse order
+    for(int i = res.size() - 1; i >= 0; i--){
+        cout<<res[i]<<" ";
+    }
+    cout<<endl;
+}
+
 int main() {
 
     Node* root = NULL;
@@ -785,8 +886,18 @@ int main() {
     //     cout<<"LCA not found"<<endl;
     // }
 
-    int count = kPathSum(root, 4);
-    cout<<"The count is : "<<count<<endl;
+    // int count = kPathSum(root, 4);
+    // cout<<"The count is : "<<count<<endl;
+
+    // morrisInorderTraversal(root);
+    // inorderTraversal(root);
+
+    // morrisPreorderTraversal(root);
+    // preorderTraversal(root);
+
+    morrisPostorderTraversal(root);
+    postorderTraversal(root);
+    cout<<endl;
  
     return 0;
 }
