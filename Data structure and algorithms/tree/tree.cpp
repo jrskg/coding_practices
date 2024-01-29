@@ -830,6 +830,57 @@ void morrisPostorderTraversal(Node* root){
     cout<<endl;
 }
 
+void flattenTree(Node* root){
+    Node* curr = root;
+    while(curr != NULL){
+        if(curr->left){
+            Node* pred = curr->left;
+            while(pred->right != NULL){
+                pred = pred->right;
+            }
+
+            pred->right = curr->right;
+            curr->right = curr->left;
+            //marking left NULL
+            curr->left = NULL;
+        }
+        curr = curr->right;
+    }
+
+    //printing flattened tree
+    curr = root;
+    while(curr != NULL){
+        cout<<curr->data<<" ";
+        curr = curr->right;
+    }
+    cout<<endl;
+}
+
+Node* flattenedRecursive(Node* root){
+    if(root == NULL){
+        return NULL;
+    }
+    if(root->left == NULL && root->right == NULL){
+        return root;
+    }
+
+    Node* leftAns = flattenedRecursive(root->left);
+    Node* rightAns = flattenedRecursive(root->right);
+
+    root->left = NULL;
+    if(leftAns != NULL){
+        root->right = leftAns;
+        Node* temp = leftAns;
+        while(temp->right != NULL){
+            temp = temp->right;
+        }
+        temp->right = rightAns;
+    }else{
+        root->right = rightAns;
+    }
+    return root;
+}
+
 int main() {
 
     Node* root = NULL;
@@ -895,9 +946,16 @@ int main() {
     // morrisPreorderTraversal(root);
     // preorderTraversal(root);
 
-    morrisPostorderTraversal(root);
-    postorderTraversal(root);
+    // morrisPostorderTraversal(root);
+    // postorderTraversal(root);
+    // cout<<endl;
+
+    // flattenTree(root);
+    Node* ans = flattenedRecursive(root);
+    while(ans != NULL){
+        cout<<ans->data<<" ";
+        ans = ans->right;
+    }
     cout<<endl;
- 
     return 0;
 }
