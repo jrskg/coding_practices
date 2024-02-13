@@ -337,6 +337,36 @@ Node* preorderToBST(vector<int> &preorder){
     return buildFormPreorder(preorder, mini, maxi, i);
 }
 
+vector<int> mergeTwoSortedArray(vector<int> a, vector<int> b){
+    int aSize = a.size(), bSize = b.size();
+    vector<int> ans(aSize+bSize);
+    int i = 0, j = 0, k = 0;
+
+    while(i < aSize && j < bSize){
+        if(a[i] < b[j]){
+            ans[k++] = a[i++];
+        }else{
+            ans[k++] = b[j++];
+        }
+    }
+
+    while(i < aSize){
+        ans[k++] = a[i++];
+    }
+    while(j < bSize){
+        ans[k++] = b[j++];
+    }
+    return ans;
+}
+Node* mergeTwoBST(Node* root1, Node* root2){
+    vector<int> bst1, bst2;
+    getInorderData(root1, bst1);
+    getInorderData(root2, bst2);
+
+    vector<int>mergedArray = mergeTwoSortedArray(bst1, bst2);
+
+    return buildBalanced(mergedArray, 0, mergedArray.size()-1);
+}
 
 int main() {
     // cout<<"Okay"<<endl;
