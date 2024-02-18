@@ -115,7 +115,7 @@ void heapifyMax(vector<int> &arr, int size, int i){
 }
 vector<int>buildMaxHeap(vector<int>arr){
   int size = arr.size();
-  //in 0 based indexing leaf node starts from (size/2) and in 1 based (size/2)-1
+  //in 0 based indexing leaf node starts from (size/2) and in 1 based (size/2)+1
   for(int i = (size/2)-1; i >= 0; i--){
     heapifyMax(arr, size, i);
   }
