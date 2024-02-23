@@ -23,7 +23,6 @@ public class OddEven {
             }
         }
         System.out.println();
-        sc.close();
     }
     
 }
