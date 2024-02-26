@@ -14,6 +14,7 @@ public class Palindrome {
         while (i <= j) {
             if(str.charAt(i) != str.charAt(j)){
                 isPalindrome = false;
+                break;
             }
             i++;
             j--;

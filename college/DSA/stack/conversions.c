@@ -169,6 +169,6 @@ int main() {
     printf("Enter infix : ");
     scanf("%s", str);
     infixToPostfix(str);
-    infixToPrefix(str);
+    // infixToPrefix(str);
     return 0;
 }

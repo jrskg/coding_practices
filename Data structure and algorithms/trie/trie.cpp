@@ -147,6 +147,48 @@ string lcpWithTrie(vector<string> &words){
     return ans;
 }
 
+void printSuggestions(TrieNode* curr, vector<string> &temp, string prefix){
+    if(curr->isTerminal){
+        temp.push_back(prefix);
+        // return;
+    }
+
+    for(char ch = 'a'; ch <= 'z'; ch++){
+        TrieNode* next = curr->children[ch-'a'];
+        if(next != NULL){
+            prefix.push_back(ch);
+            printSuggestions(next, temp, prefix);
+            prefix.pop_back();
+        }
+    }
+}
+
+vector<vector<string>>phoneDirectory(vector<string>list, string searchQuery){
+    Trie* t = new Trie();
+    for(int i = 0; i < list.size(); i++){
+        t->insertWord(list[i]);
+    }
+
+    TrieNode * prev = t->root;
+    vector<vector<string>>output;
+    string prefix = "";
+    for(int i = 0; i < searchQuery.length(); i++){
+        char lastCh = searchQuery[i];
+        prefix.push_back(lastCh);
+        TrieNode * curr = prev->children[lastCh-'a'];
+        if(curr == NULL){
+            break;
+        }
+        vector<string>temp;
+        printSuggestions(curr, temp, prefix);
+        output.push_back(temp);
+        temp.clear();
+        prev = curr;
+    }
+
+    return output;
+}
+
 int main() {
     // Trie *t = new Trie();
     // t->insertWord("abc");
@@ -156,13 +198,26 @@ int main() {
     // t->removeWord("suraj");
     // cout<<t->searchWord("suraj")<<endl;
 
-    vector<string>words;
-    words.push_back("coder");
-    words.push_back("coding");
-    words.push_back("codsen");
-    // string lcp = longestCommonPrefix(words);
-    string lcp = lcpWithTrie(words);
-    cout<<"LCP : "<<lcp<<endl;
+    // vector<string>words;
+    // words.push_back("coder");
+    // words.push_back("coding");
+    // words.push_back("codsen");
+    // // string lcp = longestCommonPrefix(words);
+    // string lcp = lcpWithTrie(words);
+    // cout<<"LCP : "<<lcp<<endl;
+
+
+    vector<string>list;
+    list.push_back("coder");
+    list.push_back("coding");
+    list.push_back("codsen");
+    vector<vector<string>>ans = phoneDirectory(list, "codsen");
+
+    for(int i = 0; i < ans.size(); i++){
+        for(int j = 0; j < ans[i].size(); j++){
+            cout<<ans[i][j]<<" ";
+        }cout<<endl;
+    }
 
     return 0;
 }
