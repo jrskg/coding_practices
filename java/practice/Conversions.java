@@ -7,15 +7,19 @@ public class Conversions {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Enter infix : ");
-        String infix = sc.nextLine();
+//        System.out.print("Enter infix : ");
+//        String infix = sc.nextLine();
+//
+//        System.out.print("Enter postfix : ");
+//        String postfix = sc.nextLine();
+//
+//        infixToPostfix(infix);
+//        infixToPrefix(infix);
+//        postfixToInfix(postfix);
 
-        System.out.print("Enter postfix : ");
-        String postfix = sc.nextLine();
-
-        infixToPostfix(infix);
-        infixToPrefix(infix);
-        postfixToInfix(postfix);
+        System.out.print("Enter prefix : ");
+        String prefix = sc.nextLine();
+        prefixToInfix(prefix);
     }
 
     static void infixToPostfix(String infix){
@@ -116,6 +120,26 @@ public class Conversions {
                 String op2 = st.peek();
                 st.pop();
                 String val = "(" + op2 + ch + op1 + ")";
+                st.push(val);
+            }
+        }
+        System.out.println("Infix : " + st.peek());
+    }
+
+    static void prefixToInfix(String prefix){
+        int size = prefix.length();
+        Stack<String> st = new Stack<>();
+
+        for(int i = size-1; i >= 0; i--){
+            char ch = prefix.charAt(i);
+            if(Character.isAlphabetic(ch)){
+                st.push(""+ch);
+            }else{
+                String op1 = st.peek();
+                st.pop();
+                String op2 = st.peek();
+                st.pop();
+                String val = "(" + op1 + ch + op2 + ")";
                 st.push(val);
             }
         }
