@@ -190,6 +190,106 @@ vector<int> topologicalSortDfs(int n, unordered_map<int, list<int>> &adj){
     return ans;
 }
 
+vector<int> topoSortKahnAlgo(int n, unordered_map<int, list<int>> &adj){
+    vector<int>indegree(n, 0);
+    for(auto i : adj){
+        for(auto j : i.second){
+            indegree[j]++;
+        }
+    }
+
+    queue<int> q;
+    for(int i = 0; i < n; i++){
+        if(indegree[i] == 0){
+            q.push(i);
+        }
+    }
+
+    vector<int> ans;
+    while(!q.empty()){
+        int front = q.front();
+        q.pop();
+        ans.push_back(front);
+
+        for(auto i : adj[front]){
+            indegree[i]--;
+            if(indegree[i] == 0){
+                q.push(i);
+            }
+        }
+    }
+    return ans;
+}
+
+bool cycleInDirectedBfs(int n, unordered_map<int, list<int>> &adj){
+    vector<int> indegree(n, 0);
+    for(auto i : adj){
+        for(auto j : i.second){
+            indegree[j]++;
+        }
+    }
+
+    queue<int>q;
+    for(int i = 0; i < n; i++){
+        if(indegree[i] == 0){
+            q.push(i);
+        }
+    }
+
+    int count = 0;
+    while(!q.empty()){
+        int front = q.front();
+        q.pop();
+        count++;
+
+        for(auto i : adj[front]){
+            indegree[i]--;
+            if(indegree[i] == 0){
+                q.push(i);
+            }
+        }
+    }
+
+    return n != count;
+}
+
+vector<int> shortestPathBfsUnweighted(int n, unordered_map<int, list<int>> &adj, int s, int t){
+    unordered_map<int, bool> visited;
+    unordered_map<int, int> parent;
+    queue<int> q;
+    q.push(s);
+    visited[s] = true;
+    parent[s] = -1;
+
+    while(!q.empty()){
+        int front = q.front();
+        q.pop();
+
+        for(auto i : adj[front]){
+            if(!visited[i]){
+                visited[i] = true;
+                parent[i] = front;
+                q.push(i);
+            }
+        }
+    }
+
+    vector<int>ans;
+    int temp = t;
+    ans.push_back(temp);
+    while(temp != s){
+        temp = parent[temp];
+        ans.push_back(temp);
+    }
+
+    int start = 0, end = ans.size()-1;
+    while(start < end){
+        swap(ans[start++], ans[end--]);
+    }
+
+    return ans;
+}
+
 int main() {
     int n, m;
     bool isDirected;
@@ -225,7 +325,18 @@ int main() {
     // cout<<undirectedCycle(n, gp.adj)<<endl;
     // cout<<directedCycleDfs(n, gp.adj)<<endl;
 
-    vector<int> ans = topologicalSortDfs(n, gp.adj);
+    // vector<int> ans = topologicalSortDfs(n, gp.adj);
+    // vector<int> ans = topoSortKahnAlgo(n, gp.adj);
+    // for(int i = 0; i < ans.size(); i++){
+    //     cout<<ans[i]<<" ";
+    // }cout<<endl;
+
+    // cout<<cycleInDirectedBfs(n, gp.adj)<<endl;
+
+    int s, t;
+    cout<<"Enter start and destination : ";
+    cin >> s >> t;
+    vector<int> ans = shortestPathBfsUnweighted(n, gp.adj, s, t);
     for(int i = 0; i < ans.size(); i++){
         cout<<ans[i]<<" ";
     }cout<<endl;

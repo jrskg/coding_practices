@@ -5,6 +5,11 @@ public class CustomStack {
     int top;
     ArrayList<Integer> arr;
     int size;
+    CustomStack(){
+        this.top = -1;
+        this.size = 10;
+        this.arr = new ArrayList<>(10);
+    }
     CustomStack(int size){
         this.top = -1;
         this.size = size;
