@@ -290,6 +290,46 @@ vector<int> shortestPathBfsUnweighted(int n, unordered_map<int, list<int>> &adj,
     return ans;
 }
 
+void dfsForBridge(int node, int parent, int &timer, vector<int> &low, vector<int> &disc, unordered_map<int, bool> &vis,unordered_map<int, list<int>> &adj, vector<vector<int>> &result){
+    vis[node] = true;
+    low[node] = disc[node] = timer++;
+
+    for(auto nbr : adj[node]){
+        if(nbr == parent){
+            continue;
+        }
+
+        if(!vis[nbr]){
+            dfsForBridge(nbr, node, timer, low, disc, vis, adj, result);
+            low[node] = min(low[node], low[nbr]);
+            if(low[nbr] > disc[node]){
+                vector<int> ans;
+                ans.push_back(node);
+                ans.push_back(nbr);
+                result.push_back(ans);
+            }
+        }else{
+            low[node] = min(low[node], disc[nbr]);
+        }
+    }
+}
+vector<vector<int>> findBridges(int n, unordered_map<int,list<int>> &adj){
+    vector<int> low(n, -1);
+    vector<int> disc(n, -1);
+    int parent = -1;
+    int timer = 0;
+    unordered_map<int, bool> vis;
+    vector<vector<int>> result;
+
+    for(int i = 0; i < n; i++){
+        if(!vis[i]){
+            dfsForBridge(i, parent, timer, low, disc, vis, adj, result);
+        }
+    }
+
+    return result;
+}
+
 int main() {
     int n, m;
     bool isDirected;
@@ -333,12 +373,19 @@ int main() {
 
     // cout<<cycleInDirectedBfs(n, gp.adj)<<endl;
 
-    int s, t;
-    cout<<"Enter start and destination : ";
-    cin >> s >> t;
-    vector<int> ans = shortestPathBfsUnweighted(n, gp.adj, s, t);
+    // int s, t;
+    // cout<<"Enter start and destination : ";
+    // cin >> s >> t;
+    // vector<int> ans = shortestPathBfsUnweighted(n, gp.adj, s, t);
+    // for(int i = 0; i < ans.size(); i++){
+    //     cout<<ans[i]<<" ";
+    // }cout<<endl;
+
+    vector<vector<int>> ans = findBridges(n, gp.adj);
     for(int i = 0; i < ans.size(); i++){
-        cout<<ans[i]<<" ";
+        for(int j = 0; j < ans[i].size(); j++){
+            cout<<ans[i][j]<<" ";
+        }cout<<endl;
     }cout<<endl;
 
     return 0;

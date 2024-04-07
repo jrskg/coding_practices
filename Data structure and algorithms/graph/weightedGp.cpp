@@ -101,6 +101,74 @@ vector<int> dijkstra(unordered_map<int, list<pair<int, int>>> &adj, int source, 
     return ans;
 }
 
+vector<pair<pair<int, int>, int>>primsMST(unordered_map<int, list<pair<int, int>>> &adj, int vertices){
+    //assuming node starts from 1 - vertices
+    vector<int> key(vertices+1, INT32_MAX);
+    vector<bool> mst(vertices+1, false);
+    vector<int> parent(vertices+1, -1);
+
+    parent[1] = -1;
+    key[1] = 0;
+
+    for(int i = 1; i <= vertices; i++){
+        int minWeigthNode;
+        int mini = INT32_MAX;
+
+        for(int v = 1; v <= vertices; v++){
+            if(mst[v] == false && key[v] < mini){
+                mini = key[v];
+                minWeigthNode = v;
+            }
+        }
+
+        mst[minWeigthNode] = true;
+
+        for(auto it : adj[minWeigthNode]){
+            if(mst[it.first] == false && it.second < key[it.first]){
+                key[it.first] = it.second;
+                parent[it.first] = minWeigthNode;
+            }
+        }
+    }
+
+    vector<pair<pair<int, int>, int>> ans;
+    for(int i = 2; i <= vertices; i++){
+        ans.push_back({{parent[i], i}, key[i]});
+    }
+
+    return ans;
+}
+
+vector<int> bellmonFord(int n, int e, int src, vector<vector<int>> &edges){
+    vector<int> dist(n+1, 1e9);
+    dist[src] = 0;
+    for(int i = 1; i < n; i++){
+        for(int j = 0; j < e; j++){
+            int u = edges[j][0];
+            int v = edges[j][1];
+            int wt = edges[j][2];
+
+            if(dist[u] != 1e9 && (dist[u] + wt) < dist[v]){
+                dist[v] = dist[u] + wt;
+            }
+        }
+    }
+
+    //checking for loop
+    bool flag = false;
+    for(int j = 0; j < e; j++){
+        int u = edges[j][0];
+        int v = edges[j][1];
+        int wt = edges[j][2];
+
+        if(dist[u] != 1e9 && (dist[u] + wt) < dist[v]){
+            flag = true;
+        }
+    }
+
+    return !flag ? dist : vector<int>(n+1, 1e9);
+}
+
 int main() {
 
     int n, m;
@@ -112,22 +180,37 @@ int main() {
     cout<<"Directed or not (1/0) : ";
     cin>>isDirected;
 
+    vector<vector<int>> edges(m);
+
     Graph gp;
+    cout<<"Enter all edges"<<endl;
     for(int i = 0; i < m; i++){
         int u, v, weight;
         cin>>u>>v>>weight;
+        edges[i].push_back(u);
+        edges[i].push_back(v);
+        edges[i].push_back(weight);
         gp.addEdge(u, v, weight, isDirected);
     }
 
     gp.printGraph();
 
-    int src;
-    cout<<"Enter source node : ";
-    cin>>src;
+    // int src;
+    // cout<<"Enter source node : ";
+    // cin>>src;
 
-    // vector<int> paths = getShortestPathDAG(gp.adj, src, n);
-    vector<int> paths = dijkstra(gp.adj, src, n);
-    printVector(paths);
+    // // vector<int> paths = getShortestPathDAG(gp.adj, src, n);
+    // vector<int> paths = dijkstra(gp.adj, src, n);
+    // printVector(paths);
+
+    int src;
+    cout<<"Enter src : ";
+    cin>>src;
+    vector<int> ans = bellmonFord(n, m, src, edges);
+
+    for(int i = 1; i < ans.size(); i++){
+        cout<<ans[i]<<" ";
+    }cout<<endl;
     
     return 0;
 }

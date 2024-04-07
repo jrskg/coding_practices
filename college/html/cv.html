@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My CV</title>
+    <style>
+      area {
+        outline: red;
+      }
+      body{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .name {
+        text-align: center;
+        font-family: system-ui;
+        margin-bottom: 30px;
+        color: #ff0040;
+        font-size: 50px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .name:hover {
+        transform: scale(1.1);
+      }
+      img {
+        background-color: white;
+        padding: 10px;
+        transition: all 0.4s;
+        border-radius: 10px;
+        width: 400px;
+      }
+      img:hover{
+        box-shadow: 2px 2px 9px 4px #ababab;
+        transform: translate(-10px, -10px);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="name">Suraj Gupta</h1>
+
+    <img
+      src="./pic.jpeg"
+      alt="suraj gupta"
+      width="300px"
+      usemap="#my-img-map"
+    />
+
+    <map name="my-img-map">
+      <area
+        shape="circle"
+        coords="100, 120, 100"
+        href="index.html"
+        alt="index"
+      />
+    </map>
+
+    <h2>Personal Information</h2>
+    <p><b>Age:</b> 23 years</p>
+    <p><b>Location:</b> Pheta, Nepal</p>
+    <p><b>Email:</b> sgsuraj150@gmail.com</p>
+    <p><b>Phone:</b> +977-9811202946</p>
+
+    <h2>Education</h2>
+    <p>
+      <b>Bachelor in Computer Application</b><br />
+      Tribhuwan University, Kathmandu, Nepal<br />
+      Year: 2023-running
+    </p>
+
+    <h2>Skills</h2>
+    <ul>
+      <li>HTML</li>
+      <li>CSS</li>
+      <li>JavaScript</li>
+      <li>React.js</li>
+      <li>Node.js</li>
+      <li>React Native</li>
+      <li>Tailwind CSS</li>
+      <li>C</li>
+      <li>C++</li>
+      <li>Python</li>
+      <li>Java</li>
+    </ul>
+
+    <h2>Experience</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Position</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ABC Technologies</td>
+          <td>Software Engineer</td>
+          <td>2022 - Present</td>
+        </tr>
+        <tr>
+          <td>XYZ Solutions</td>
+          <td>Intern</td>
+          <td>2021 - 2022</td>
+        </tr>
+        <tr>
+          <td>XYZ Solutions</td>
+          <td>Intern</td>
+          <td>2021 - 2022</td>
+        </tr>
+        <tr>
+          <td>XYZ Solutions</td>
+          <td>Intern</td>
+          <td>2021 - 2022</td>
+        </tr>
+        <tr>
+          <td>XYZ Solutions</td>
+          <td>Intern</td>
+          <td>2021 - 2022</td>
+        </tr>
+        <tr>
+          <td>XYZ Solutions</td>
+          <td>Intern</td>
+          <td>2021 - 2022</td>
+        </tr>
+        <tr>
+          <td>XYZ Solutions</td>
+          <td>Intern</td>
+          <td>2021 - 2022</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Contact Me</h2>
+    <p>Feel free to email me for any inquiries:</p>
+    <form action="mailto:john@example.com" method="post" enctype="text/plain">
+      <label for="name">Name:</label><br />
+      <input type="text" id="name" name="name" required /><br /><br />
+      <label for="email">Email:</label><br />
+      <input type="email" id="email" name="email" required /><br /><br />
+      <label for="message">Message:</label><br />
+      <textarea
+        id="message"
+        name="message"
+        rows="4"
+        cols="50"
+        required
+      ></textarea
+      ><br /><br />
+      <input type="submit" value="Submit" />
+      <input type="reset" value="Reset" />
+    </form>
+
+    <h2>Interests</h2>
+    <p>Choose your interests:</p>
+    <input
+      type="checkbox"
+      id="interest1"
+      name="interest1"
+      value="Programming"
+    />
+    <label for="interest1"> Programming</label><br />
+    <input type="checkbox" id="interest2" name="interest2" value="Reading" />
+    <label for="interest2"> Reading</label><br />
+    <input type="checkbox" id="interest3" name="interest3" value="Sports" />
+    <label for="interest3"> Sports</label><br />
+    <input
+      type="checkbox"
+      id="interest4"
+      name="interest4"
+      value="Building Systems"
+    />
+    <label for="interest4"> Building Systems</label><br />
+
+    <h2>Availability</h2>
+    <p>Select your availability:</p>
+    <input
+      type="radio"
+      id="availability1"
+      name="availability"
+      value="Full-time"
+    />
+    <label for="availability1"> Full-time</label><br />
+    <input
+      type="radio"
+      id="availability2"
+      name="availability"
+      value="Part-time"
+    />
+    <label for="availability2"> Part-time</label><br />
+
+    <h2>Languages</h2>
+    <ul>
+      <li>English</li>
+      <li>French</li>
+      <li>Spanish</li>
+      <li>Nepali</li>
+      <li>Bhojpuri</li>
+      <li>Chinese</li>
+    </ul>
+
+    <h2>Hobbies</h2>
+    <ul>
+      <li>Dancing</li>
+      <li>Coding</li>
+      <li>Playing</li>
+      <li>Running</li>
+      <li>Cooking -(Don't know how to do)</li>
+    </ul>
+
+    <h2>Certifications</h2>
+    <ul>
+      <li>HTML5 Certified</li>
+      <li>CSS3 Fundamentals</li>
+      <li>JavaScript Basics</li>
+    </ul>
+
+    <h2>References</h2>
+    <p>Available upon request</p>
+  </body>
+</html>
