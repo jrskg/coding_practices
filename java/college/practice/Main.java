@@ -14,10 +14,10 @@ public class Main {
 //        Modifiers obj3 = new Modifiers(10, 20);
 //        System.out.println(obj3.pub);
         //this will throw error
-        //System.out.println(obj3.pri);
+        // System.out.println(obj3.pri);
 
-        Recursion rec = new Recursion();
-        System.out.println("Factorial : " + rec.factorial(5));
-        System.out.println("Fibonacci : " + rec.fibonacci(6));
+//        Recursion rec = new Recursion();
+//        System.out.println("Factorial : " + rec.factorial(5));
+//        System.out.println("Fibonacci : " + rec.fibonacci(6));
     }
 }
