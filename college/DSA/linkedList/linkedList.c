@@ -46,18 +46,78 @@ Node* insertLast(Node* head, int data){
     return head;
 }
 
-Node insertAtPosition(Node* head, int data, int position){
-    
+Node* insertAtPosition(Node* head, int data, int position){
+    if(head == NULL){
+        head = insertFirst(head, data);
+        return head;
+    }
+
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    Node* temp = head;
+
+    for(int i = 1; i < position-1 && temp != NULL; i++){
+        temp = temp->next;
+    }
+    if(temp == NULL){
+        printf("Invalid position\n");
+        return head;
+    }
+    newNode->next = temp->next;
+    temp->next = newNode;
+    return head;
+}
+
+Node* deleteFirst(Node* head){
+    if(head == NULL){
+        return NULL;
+    }
+    Node* temp = head;
+    head = head->next;
+    free(temp);
+    return head;
+}
+
+Node* deleteLast(Node* head){
+    if(head == NULL){
+        return NULL;
+    }
+    if(head->next == NULL){
+        free(head);
+        return NULL;
+    }
+    Node* temp = head;
+    while(temp->next->next != NULL){
+        temp = temp->next;
+    }
+    free(temp->next);
+    temp->next = NULL;
+    return head;
+}
+
+Node* deleteAtPosition(Node* head, int position){
+    if(head == NULL){
+        return NULL;
+    }
+    if(position == 1){
+        return deleteFirst(head);
+    }
+    Node* temp = head;
+    for(int i = 1; i < position-1 && temp != NULL; i++){
+        temp = temp->next;
+    }
+    if(temp == NULL || temp->next == NULL){
+        printf("Invalid position\n");
+        return head;
+    }
+    Node* next = temp->next->next;
+    free(temp->next);
+    temp->next = next;
+    return head;
 }
 
 int main() {
     Node* head = NULL;
-    head = insertLast(head, 10);
-    head = insertFirst(head, 90);
-    head = insertLast(head, 20);
-    head = insertFirst(head, 60);
-    head = insertFirst(head, 40);
-    printList(head);
-    
     return 0;
 }

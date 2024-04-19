@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#define MOD 1000000007
+
 using namespace std;
 
 void printVector(vector<int> &v){
@@ -225,6 +227,193 @@ long long int houseRobber(vector<int>& valueInHouse){
     return max(ans1, ans2);
 }
 
+int cutRodSolveRec(int n, int x, int y, int z){
+    if(n == 0)
+        return 0;
+
+    if(n < 0)
+        return INT32_MIN;
+
+    int a = cutRodSolveRec(n-x, x, y, z) + 1;
+    int b = cutRodSolveRec(n-y, x, y, z) + 1;
+    int c = cutRodSolveRec(n-z, x, y, z) + 1;
+
+    return max(a,max(b, c));
+}
+
+int cutRodSolveMem(int n, int x, int y, int z, vector<int> &dp){
+    if(n == 0)
+        return 0;
+
+    if(n < 0)
+        return INT32_MIN;
+
+    if(dp[n] != -1)
+        return dp[n];
+
+    int a = cutRodSolveMem(n-x, x, y, z, dp) + 1;
+    int b = cutRodSolveMem(n-y, x, y, z, dp) + 1;
+    int c = cutRodSolveMem(n-z, x, y, z, dp) + 1;
+    dp[n] = max(a,max(b, c));
+    return dp[n];
+}
+
+int cutRodSolveTab(int n, int x, int y, int z){
+	vector<int> dp(n+1, INT32_MIN);
+	dp[0] = 0;
+
+	for(int i = 1; i <= n; i++){
+		int a = i-x < 0 ? INT32_MIN : dp[i-x] + 1;
+		int b = i-y < 0 ? INT32_MIN : dp[i-y] + 1;
+		int c = i-z < 0 ? INT32_MIN : dp[i-z] + 1;
+
+		dp[i] = max(a, max(b, c));
+	}
+
+    printVector(dp);
+
+	return dp[n];
+}
+int cutRod(int n, int x, int y, int z){
+    vector<int> dp(n+1, -1);
+    // int ans = cutRodSolveMem(n, x, y, z, dp);
+    // int ans = cutRodSolveRec(n, x, y, z);
+
+    int ans = cutRodSolveTab(n, x, y, z);
+    if(ans < INT32_MIN){
+        return 0;
+    }
+
+    return ans;
+}
+
+long long int solveDerangementRec(int n){
+    if(n == 1)
+        return 0;
+
+    if(n == 2)
+        return 1;
+
+    return ((n-1) * ((solveDerangementRec(n-1))%MOD + (solveDerangementRec(n-2))%MOD) )%MOD;
+}
+long long int solveDerangementMem(int n, vector<long long int> &dp){
+    if(n == 1)
+        return 0;
+
+    if(n == 2)
+        return 1;
+
+    if(dp[n] != -1)
+        return dp[n];
+
+    dp[n] = ((n-1) * ((solveDerangementMem(n-1, dp))%MOD + (solveDerangementMem(n-2, dp))%MOD) )%MOD;
+    return dp[n];
+}
+
+long long int solveDerangementTab(int n){
+    vector<long long int> dp(n+1, -1);
+    dp[1] = 0;
+    dp[2] = 1;
+
+    for(int i = 3; i <= n; i++){
+        long long int a = dp[i-1]%MOD;
+        long long int b = dp[i-2]%MOD;
+        long long int sum = (a+b)%MOD;
+        dp[i] = ((i-1) * sum)%MOD;
+    }
+
+    return dp[n];
+}
+
+long long int solveDerangementTabSpace(int n){
+    long long int prev2 = 0;
+    long long int prev1 = 1; 
+
+    for(int i = 3; i <= n; i++){
+        long long int a = prev1%MOD;
+        long long int b =prev2%MOD;
+        long long int sum = (a+b)%MOD;
+        long long int ans = ((i-1) * sum)%MOD;
+        prev2 = prev1;
+        prev1 = ans;
+    }
+    return prev1;
+}
+long long int countDerangements(int n){
+    vector<long long int>dp(n+1, -1);
+    return solveDerangementTabSpace(n);
+    // return solveDerangementTab(n);
+    // return solveDerangementMem(n, dp);
+    // return solveDerangementRec(n);
+}
+
+int solveKnapSackRec(vector<int> &weight, vector<int> &value, int idx, int capacity){
+    if(idx == 0){
+        if(weight[0] <= capacity)
+            return value[0];
+        else
+            return 0;
+    }
+
+    int include = 0;
+    if(weight[idx] <= capacity)
+        include = value[idx] + solveKnapSackRec(weight, value, idx-1, capacity-weight[idx]);
+
+    int exclude = solveKnapSackRec(weight, value, idx-1, capacity);
+    return max(include, exclude);
+}
+
+int solveKnapSackMem(vector<int> &weight, vector<int> &value, int idx, int capacity, vector<vector<int>> &dp){
+    if(idx == 0){
+        if(weight[0] <= capacity)
+            return value[0];
+        else
+            return 0;
+    }
+
+    if(dp[idx][capacity] != -1)
+        return dp[idx][capacity];
+
+    int include = 0;
+    if(weight[idx] <= capacity)
+        include = value[idx] + solveKnapSackMem(weight, value, idx-1, capacity-weight[idx], dp);
+
+    int exclude = solveKnapSackMem(weight, value, idx-1, capacity, dp);
+    dp[idx][capacity] = max(include, exclude);
+    return dp[idx][capacity];
+}
+
+int solveKnapSackTab(vector<int> &weight, vector<int> &value, int n, int capacity){
+	vector<vector<int>> dp(n, vector<int>(capacity+1, 0));
+
+	for(int i = weight[0]; i <= capacity; i++){
+		if(weight[0] <= i)
+			dp[0][i] = value[0];
+		else
+			dp[0][i] = 0;
+	}
+
+	for(int i = 1; i < n; i++){
+		for(int w = 0; w <= capacity; w++){
+			int include = 0;
+			if(weight[i] <= w){
+				include = value[i] + dp[i-1][w-weight[i]];
+			}
+			int exclude = dp[i-1][w];
+
+			dp[i][w] = max(include, exclude);
+		}
+	}
+
+	return dp[n-1][capacity];
+}
+int knapsack(vector<int> &weight, vector<int> &value, int n, int maxWeight){
+    // return solveKnapSackRec(weight, value, n-1, maxWeight);
+
+    vector<vector<int>> dp(n, vector<int>(maxWeight+1, -1));
+    return solveKnapSackMem(weight, value, n-1, maxWeight, dp);
+}
+
 int main() {
     // int n;
     // cout<<"Enter a number : ";
@@ -242,8 +431,11 @@ int main() {
     // int amount = 7;
     // cout<<minimumCoins(nums, amount)<<endl;
 
-    vector<int> valueInHouse = {0};
-    cout<<valueInHouse.size()<<endl;
-    cout<<houseRobber(valueInHouse)<<endl;
+    // vector<int> valueInHouse = {0};
+    // cout<<valueInHouse.size()<<endl;
+    // cout<<houseRobber(valueInHouse)<<endl;
+
+    // cutRod(7, 5, 2, 2);
+
     return 0;
 }
