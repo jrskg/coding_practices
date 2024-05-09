@@ -414,6 +414,110 @@ int knapsack(vector<int> &weight, vector<int> &value, int n, int maxWeight){
     return solveKnapSackMem(weight, value, n-1, maxWeight, dp);
 }
 
+int solveCombinationSumRec(vector<int> &nums, int target){
+    if(target < 0)
+        return 0;
+
+    if(target == 0)
+        return 1;
+
+    int ans = 0, size = nums.size();
+    for(int i = 0; i < size; i++){
+        ans += solveCombinationSumRec(nums, target - nums[i]);
+    }
+
+    return ans;
+}
+int solveCombinationSumMem(vector<int> &nums, int target, vector<int> &dp){
+    if(target < 0)
+        return 0;
+
+    if(target == 0)
+        return 1;
+
+    if(dp[target] != -1)
+        return dp[target];
+
+    int ans = 0, size = nums.size();
+    for(int i = 0; i < size; i++){
+        ans += solveCombinationSumMem(nums, target - nums[i], dp);
+    }
+
+    dp[target] = ans;
+    return dp[target];
+}
+
+int solveCombinationSumTab(vector<int> &nums, int target){
+    vector<int> dp(target+1, 0);
+    dp[0] = 1;
+
+    int size = nums.size();
+    for(int i = 1; i <= target; i++){
+        for(int j = 0; j < size; j++){
+            dp[i] += (i - nums[j]) < 0 ? 0 : dp[i - nums[j]];
+        }
+    }
+
+    return dp[target];
+}
+int combinationSum(vector<int> &nums, int target){
+    vector<int> dp(target+1, -1);
+    // return solveCombinationSumRec(nums, target);
+    // return solveCombinationSumMem(nums, target, dp);
+    return solveCombinationSumTab(nums, target);
+}
+
+int solveMinSquareRec(int n){
+    if(n == 0){
+        return 0;
+    }
+    
+    int ans = n;
+    for(int i = 1; i*i <= n; i++){
+        ans = min(ans, 1+solveMinSquareRec(n - (i*i)));
+    }
+    
+    return ans;
+}
+
+int solveMinSquareMem(int n, vector<int> &dp){
+    if(n == 0){
+        return 0;
+    }
+
+    if(dp[n] != -1){
+        return dp[n];
+    }
+    
+    int ans = n;
+    for(int i = 1; i*i <= n; i++){
+        ans = min(ans, 1+solveMinSquareMem(n - (i*i), dp));
+    }
+    
+    dp[n] = ans;
+    return dp[n];
+}
+
+int solveMinSquareTab(int n){
+    vector<int> dp(n+1, INT32_MAX);
+    dp[0] = 0;
+    
+    for(int i = 1; i <= n; i++){
+        int ans = n;
+        for(int j = 1; j*j <= i; j++){
+            ans = min(ans, 1+dp[i - (j*j)]);
+        }
+        dp[i] = ans;
+    }    
+    return dp[n];
+}
+int minSquares(int n){
+    // vector<int> dp(n+1, -1);
+    return solveMinSquareTab(n);
+    // return solveMinSquareMem(n, dp);
+    // return solveMinSquareRec(n);
+}
+
 int main() {
     // int n;
     // cout<<"Enter a number : ";
@@ -436,6 +540,11 @@ int main() {
     // cout<<houseRobber(valueInHouse)<<endl;
 
     // cutRod(7, 5, 2, 2);
+
+    vector<int> nums = {1, 2};
+    int target = 3;
+
+    cout<<combinationSum(nums, target)<<endl;
 
     return 0;
 }
