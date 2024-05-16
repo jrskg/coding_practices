@@ -110,6 +110,132 @@ long long minCostToJoinRopes(vector<long long> &arr){
 }
 
 //hufman encoding
+class Node{
+  public:
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int data){
+      this->data = data;
+      this->left = NULL;
+      this->right = NULL;
+    }
+};
+
+class cmp{
+  public:
+  bool operator()(Node* a, Node* b){
+    return a->data > b->data;
+  }
+};
+
+void solveHuffManEncodes(Node* root, vector<string> &ans, string temp){
+  if(root->left == NULL && root->right == NULL){
+    ans.push_back(temp);
+    return;
+  }
+
+  solveHuffManEncodes(root->left, ans, temp+'0');
+  solveHuffManEncodes(root->right, ans, temp+'1');
+}
+vector<string> huffmanCodes(string S,vector<int> f,int N){
+  priority_queue<Node*, vector<Node*>, cmp> pq;
+  for(int i = 0; i < N; i++){
+    Node* node = new Node(f[i]);
+    pq.push(node);
+  }
+
+  while(pq.size() > 1){
+    Node* left = pq.top();
+    pq.pop();
+    Node* right = pq.top();
+    pq.pop();
+
+    Node* addedNode = new Node(left->data + right->data);
+    addedNode->left = left;
+    addedNode->right = right;
+
+    pq.push(addedNode);
+  }
+  vector<string> ans;
+  string temp = "";
+  solveHuffManEncodes(pq.top(), ans, temp);
+  return ans;
+}
+
+struct Item{
+  int value;
+  int weight;
+};
+bool comparator(pair<double, Item>a, pair<double, Item> b){
+  return a.first > b.first;
+}
+double fractionalKnapsack(int w, Item arr[], int n) {
+  vector<pair<double, Item>> perUnitVal(n);
+    for(int i = 0; i < n; i++){
+      double perUnit = (1.0*arr[i].value)/arr[i].weight;
+      pair<double, Item> p = make_pair(perUnit, arr[i]);
+      perUnitVal.push_back(p);
+    }
+    sort(perUnitVal.begin(), perUnitVal.end(), comparator);
+  
+    double maxi = 0;
+    for(int i = 0; i < n; i++){
+      int perUnit = perUnitVal[i].first;
+      Item item = perUnitVal[i].second;
+      if(w < item.weight){
+        maxi = maxi + (perUnit * w);
+        w = 0;
+      }else{
+        maxi = maxi + item.value;
+        w -= item.weight;
+      }
+    }
+  return maxi;
+}
+
+
+struct Job { 
+  int id;
+  int dead;
+  int profit;
+};
+bool myCmp(Job a, Job b){
+  return a.profit > b.profit;
+}    
+vector<int> JobScheduling(Job arr[], int n){ 
+  sort(arr, arr+n, myCmp);
+  int maxDeadLine = INT32_MIN;
+  for(int i = 0; i < n; i++){
+    maxDeadLine = max(maxDeadLine, arr[i].dead);
+  }
+  
+  vector<int> schedule(maxDeadLine+1, -1);
+  int count = 0;
+  int maxProfit = 0;
+  
+  for(int i = 0; i < n; i++){
+    int currProfit = arr[i].profit;
+    int currDead = arr[i].dead;
+    int currId = arr[i].id;
+    
+    for(int k = currDead; k > 0; k--){
+      if(schedule[k] == -1){
+        count++;
+        maxProfit += currProfit;
+        schedule[k] = currId;
+        break;
+      }
+    }
+  }
+  
+  vector<int> ans;
+  ans.push_back(count);
+  ans.push_back(maxProfit);
+  
+  return ans;
+} 
 
 
 int main() {
@@ -122,7 +248,12 @@ int main() {
   // cin>>str;
   // cout<<reverseWord(str)<<endl;
 
-  vector<long long> ropes = {2, 5, 1, 5};
-  minCostToJoinRopes(ropes);
+  // vector<long long> ropes = {2, 5, 1, 5};
+  // minCostToJoinRopes(ropes);
+  vector<int> f = {5, 9, 12, 13, 16, 45};
+  vector<string>ans = huffmanCodes("abcdef", f, 6);
+  for(int i = 0; i < ans.size(); i++){
+    cout<<ans[i]<<endl;
+  }
   return 0;
 }

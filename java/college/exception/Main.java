@@ -13,7 +13,7 @@ public class Main {
             System.out.println(e.getMessage());
         }catch (IndexOutOfBoundsException e){
             System.out.println("Out of bound");
-            System.out.println(e);
+            System.out.println(e.toString());
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
         }catch (Exception e){

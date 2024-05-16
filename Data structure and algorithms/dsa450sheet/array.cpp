@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <algorithm>
 
 using namespace std;
 
@@ -196,6 +197,47 @@ long long maxSubarraySum(vector<int> &arr) {
   return max_so_far;
 }
 
+//not clear
+int getMinDiff(int arr[], int n, int k) {
+  sort(arr, arr+n);
+  int ans = arr[n-1] - arr[0];
+  int smallest = arr[0]+k;
+  int largest = arr[n-1]-k;
+  
+  int mini = 0, maxi = 0;
+  for(int i = 0; i < n-1; i++){
+    mini = min(smallest, arr[i+1]-k);
+    maxi = max(largest, arr[i]+k);
+    
+    if(mini < 0) continue;
+    
+    ans = min(ans, maxi-mini);
+  }
+  
+  return ans;
+}
+
+//not clear
+int minJumps(int arr[], int n){
+  int maxR = arr[0];
+  int steps = arr[0];
+  int jump = 1;
+  
+  if(n == 1) return 0;
+  else if(arr[0] == 0) return -1;
+  else{
+    for(int i = 1; i < n; i++){
+      if(i >= n-1) return jump;
+      maxR = max(maxR, i+arr[i]);
+      steps--;
+      if(steps == 0){
+        jump++;
+        if(i >= maxR) return -1;
+        steps = maxR-i;
+      }
+    }
+  }
+}
 
 int main() {
   // vector<int> vec = {1, 2, 3, 4, 5, 6};
