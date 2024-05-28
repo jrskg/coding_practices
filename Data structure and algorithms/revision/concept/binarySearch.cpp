@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -218,7 +219,207 @@ int searchRotatedArray(vector<int>& nums, int target) {
   return ans;
 }
 
+int bookAllocation(vector<int> &books, int students){
+  int n = books.size();
+  if(students > n)
+    return -1;
+
+  int start = 0, end = 0, mid, ans;
+  for(int i = 0; i < n; i++){
+    start = max(start, books[i]);
+    end += books[i];
+  }
+
+  while(start <= end){
+    mid = start + (end - start)/2;
+    int pages = 0, count = 1;
+    for(int i = 0; i < n; i++){
+      pages += books[i];
+      if(pages > mid){
+        pages = books[i];
+        count++;
+      }
+    }
+
+    if(count <= students){
+      ans = mid;
+      end = mid - 1;
+    }else{
+      start = mid + 1;
+    }
+  }
+
+  return ans;
+}
+
+//painter problem
+long long minTime(int arr[], int n, int k){
+  long long start = 0, end = 0, mid, ans;
+  for(int i = 0; i < n; i++){
+    if(arr[i] > start)
+      start = arr[i];
+    end += arr[i];
+  }
+
+  while(start <= end){
+    mid = start + (end - start)/2;
+    long long totalTime = 0, count = 1;
+    for(int i = 0; i < n; i++){
+      totalTime += arr[i];
+      if(totalTime > mid){
+        totalTime = arr[i];
+        count++;
+      }
+    }
+
+    if(count <= k){
+      ans = mid;
+      end = mid - 1;
+    }else{
+      start = mid + 1;
+    }
+  }
+
+  return ans;
+}
+
+int aggressiveCows(int n, int k, vector<int> &stalls) {
+  sort(stalls.begin(), stalls.end());
+  int start = 1, end = stalls[n-1]-stalls[0], mid, ans;
+  
+  while(start <= end){
+    mid = start + (end  - start)/2;
+    int count = 1, pos = stalls[0];
+    for(int i = 1; i < n; i++){
+      if(mid + pos <= stalls[i]){
+        count++;
+        pos = stalls[i];
+      }
+      
+      if(count == k)
+        break;
+    }
+    
+    if(count < k)
+      end = mid - 1;
+    else{
+      ans = mid;
+      start = mid + 1;
+    }
+  }
+  
+  return ans;
+}
+
+int minEatingSpeed(vector<int>& piles, int h) {
+  int end = 0, mid, ans, n = piles.size();
+  long long start = 0;
+  for(int i = 0; i < n; i++){
+    end = max(end, piles[i]);
+    start += piles[i];
+  }
+
+  start /= h;
+  if(!start)
+    start = 1;
+
+  while(start <= end){
+    mid = start + (end - start)/2;
+    long long totalTime = 0;
+    for(int i = 0; i < n; i++){
+      totalTime += piles[i]/mid;
+
+      if(piles[i]%mid)
+        totalTime++;
+    }
+
+    if(totalTime > h){
+      start = mid + 1;
+    }else{
+      ans = mid;
+      end = mid - 1;
+    }
+  }
+
+  return ans;
+}
+
+//Binary search in 2D array
+bool binarySearchOne(vector<vector<int>> &matrix, int element){
+  int row = matrix.size();
+  int col = matrix[0].size();
+
+  for(int i = 0; i < row; i++){
+    if(matrix[i][0] <= element && matrix[i][col-1] >= element){
+      int start = 0, end = col-1, mid;
+      while(start <= end){
+        mid = start + (end - start)/2;
+        if(matrix[i][mid] == element)
+          return true;
+        else if(matrix[i][mid] < element)
+          start = mid + 1;
+        else
+          end = mid - 1;
+      }
+    }
+  }
+  return false;
+}
+
+bool binarySearchTwo(vector<vector<int>> &matrix, int element){
+  int row = matrix.size();
+  int col = matrix[0].size();
+  int total = row*col;
+  int start = 0, end = total-1, mid;
+    
+  while(start <= end){
+    mid = start + (end - start)/2;
+    int rIndex = mid / col;
+    int colIndex = mid - (rIndex * col);
+    if(matrix[rIndex][colIndex] == element)
+      return true;
+    else if(matrix[rIndex][colIndex] < element)
+      start = mid + 1;
+    else
+      end = mid - 1;
+  }
+  return false;
+}
+
+bool search(vector<vector<int> > matrix, int x) {
+  //Function to search a given number in row-column wise sorted matrix.
+  int row = matrix.size(), col = matrix[0].size();
+  int ri = 0, ci = col-1;
+  while(ri < row && ci >= 0){
+    if(matrix[ri][ci] == x)
+      return true;
+    else if(matrix[ri][ci] < x)
+      ri++;
+    else
+      ci--;
+  }
+  return false;
+}
+
+
 int main() {
-  cout<<mySqrt(1)<<endl;
+  // cout<<mySqrt(1)<<endl;
+  // vector<int> piles = {1000000000};
+  // int hrs = 2;
+
+  int row, col;
+  cout<<"Enter row and column : ";
+  cin>>row>>col;
+
+  vector<vector<int>> matrix(row, vector<int>(col, -1));
+  for(int i = 0; i < row; i++){
+    for(int j = 0; j < col; j++){
+      cin>>matrix[i][j];
+    }
+  }
+  int element;
+  cout<<"Enter element row search : ";
+  cin>>element;
+  cout<<binarySearchTwo(matrix, element)<<endl;
   return 0;
 }
