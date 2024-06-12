@@ -896,19 +896,19 @@ int main() {
     // cout<<"Displaying tree with reverse level order traversel"<<endl;
     // reverseLevelOrderTraversel(root);
 
-    // cout<<"Displaying tree with inorder traversel"<<endl;
-    // inorderTraversal(root);
+    cout<<"Displaying tree with inorder traversel"<<endl;
+    inorderTraversal(root);
     // inorderIterative(root);
-    // cout<<endl;
+    cout<<endl;
 
-    // cout<<"Displaying tree with preorder traversel"<<endl;
-    // preorderTraversal(root);
+    cout<<"Displaying tree with preorder traversel"<<endl;
+    preorderTraversal(root);
     // preorderIterative(root);
-    // cout<<endl;
+    cout<<endl;
 
-    // cout<<"Displaying tree with postorder traversel"<<endl;
-    // postorderTraversal(root);
-    // cout<<endl;
+    cout<<"Displaying tree with postorder traversel"<<endl;
+    postorderTraversal(root);
+    cout<<endl;
 
     // leftView(root);
     // rightView(root);
@@ -951,11 +951,11 @@ int main() {
     // cout<<endl;
 
     // flattenTree(root);
-    Node* ans = flattenedRecursive(root);
-    while(ans != NULL){
-        cout<<ans->data<<" ";
-        ans = ans->right;
-    }
-    cout<<endl;
+    // Node* ans = flattenedRecursive(root);
+    // while(ans != NULL){
+    //     cout<<ans->data<<" ";
+    //     ans = ans->right;
+    // }
+    // cout<<endl;
     return 0;
 }
