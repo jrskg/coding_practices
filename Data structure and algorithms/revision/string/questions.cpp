@@ -553,6 +553,105 @@ vector <int> search(string pat, string txt){
   return ans;
 }
 
+int minCharToMakePalindrome(string str){
+  string rev = str;
+  reverse(rev.begin(), rev.end());
+  int n = str.size();
+  str = str+'$'+rev;
+  int n2 = str.size();
+  vector<int> lps = buildLps(str);  
+  return n - lps[n2-1];
+}
+
+bool circularPatternMatching(string str, string pattern){
+  str = str + str;
+  int pSize = pattern.size(), size = str.size();
+  vector<int> lps(pSize, 0);
+  int pre = 0, suf = 1;
+  while(suf < pSize){
+    if(pattern[pre] == pattern[suf]){
+      lps[suf] = pre + 1;
+      pre++, suf++;
+    }else{
+      if(pre == 0){
+        suf++;
+      }else{
+        pre = lps[pre-1];
+      }
+    }
+  }
+
+  int i = 0, j = 0;
+  while(i < size){
+    if(str[i] == pattern[j]){
+      i++, j++;
+    }else{
+      if(j == 0){
+        i++;
+      }else{
+        j = lps[j-1];
+      }
+    }
+
+    if(j == pSize)
+      return true;
+  }
+  return false;
+}
+
+bool kmpSearch(string &str, string &pattern, vector<int> &lps){
+  int i = 0, j = 0;
+  int size = str.size(), pSize = pattern.size();
+  while(i < size){
+    if(str[i] == pattern[j]){
+      i++, j++;
+    }else{
+      if(j == 0){
+        i++;
+      }else{
+        j = lps[j - 1];
+      }
+    }
+
+    if(j == pSize)
+      return true;
+  }
+
+  return false;
+}
+
+int repeatedStringMatch(string a, string b){
+  if(a == b) return 1;
+  string temp = "";
+  int repeat = 0;
+  while(temp.size() < b.size()){
+    temp += a;
+    repeat++;
+  }
+
+  int bSize = b.size();
+  vector<int>lps(bSize, 0);
+  int pre = 0, suf = 1;
+  while(suf < bSize){
+    if(b[pre] == b[suf]){
+      lps[suf] = pre + 1;
+      pre++, suf++;
+    }else{
+      if(pre == 0){
+        suf++;
+      }else{
+        pre = lps[pre - 1];
+      }
+    }
+  }
+
+  if(kmpSearch(temp, b, lps)) return repeat;
+  temp += a;
+  if(kmpSearch(temp, b, lps)) return repeat + 1;
+
+  return -1;
+}
+
 int main() {
   // string str;
   // cout<<"Enter a string : ";
@@ -578,7 +677,9 @@ int main() {
   // cin>>k;
   // cout<<longestKSubstr(str, k)<<endl;
   // cout<<lpsUsingKMP(str)<<endl;
-  cout<<strStr(stack, needle)<<endl;
+  // cout<<strStr(stack, needle)<<endl;
+  // cout<<circularPatternMatching(stack, needle)<<endl;
+  cout<<repeatedStringMatch(stack, needle)<<endl;
 
   return 0;
 }

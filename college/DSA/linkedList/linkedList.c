@@ -27,6 +27,7 @@ Node* insertFirst(Node* head, int data){
     Node* temp = head;
     head = newNode;
     newNode->next = temp;
+    return head;
 }
 
 Node* insertLast(Node* head, int data){
@@ -119,5 +120,9 @@ Node* deleteAtPosition(Node* head, int position){
 
 int main() {
     Node* head = NULL;
+    head = insertFirst(head, 10);
+    printList(head);
+    head = insertFirst(head, 30);
+    printList(head);
     return 0;
 }
