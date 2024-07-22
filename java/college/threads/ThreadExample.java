@@ -32,12 +32,12 @@ public class ThreadExample {
         //Thread th2 = new Thread(new ThreadUsingRunnable(), "Thread_skg2");
 
         //using lambda expressions
-        Thread th2 = new Thread(() -> {
-            System.out.println(Thread.currentThread().getName());
-        }, "Thread_skg2");
-        th2.start();
-
-        System.out.println("Main is ending");
+//        Thread th2 = new Thread(() -> {
+//            System.out.println(Thread.currentThread().getName());
+//        }, "Thread_skg2");
+//        th2.start();
+//
+//        System.out.println("Main is ending");
     }
 }
 

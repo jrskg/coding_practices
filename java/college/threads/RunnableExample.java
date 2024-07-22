@@ -15,7 +15,7 @@ class MyRunnable implements Runnable{
 }
 
 class MyQueue{
-    private Queue<Integer>q;
+    private final Queue<Integer>q;
     private final int capacity;
 
     public MyQueue(int capacity){
