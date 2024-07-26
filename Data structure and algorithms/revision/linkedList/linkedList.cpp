@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 using namespace std;
 
 class Node{
@@ -304,6 +305,229 @@ bool isPlaindrome(Node* head){
   return true;
 }
 
+Node* removeDuplicates(Node* head){
+  if(!head->next) return head;
+  Node* curr = head->next, *prev = head, *next = NULL;
+
+  while(curr){
+    if(prev->data == curr->data){
+      next = curr->next;
+      prev->next = next;
+      delete curr;
+      curr = next;
+    }else{
+      prev = curr;
+      curr = curr->next;
+    }
+  }
+  return head;
+}
+
+Node* mergeTwoSortedList(Node* h1, Node* h2){
+  Node* head = new Node(0);
+  Node* tail = head;
+
+  while(h1 && h2){
+    if(h1->data <= h2->data){
+      tail->next = h1;
+      h1 = h1->next;
+    }else{
+      tail->next = h2;
+      h2 = h2->next;
+    }
+    tail = tail->next;
+  }
+
+  if(h1) tail->next = h1;
+  if(h2) tail->next = h2;
+
+  tail = head;
+  head = head->next;
+  delete tail;
+  return head;
+}
+
+Node* segregate(Node* head){
+  Node* temp = head;
+  int arr[3] = {0, 0, 0};
+  while(temp){
+    arr[temp->data]++;
+    temp = temp->next;
+  }
+
+  temp = head;
+  for(int i = 0; i < 3; i++){
+    while(arr[i]--){
+      temp->data = i;
+      temp = temp->next;
+    }
+  }
+  return head;
+}
+
+bool detectLoop(Node* head){
+  Node* temp = head;
+  unordered_map<Node*, bool> vis;
+  while(temp){
+    if(vis[temp]) return true;
+    vis[temp] = true;
+    temp = temp->next;
+  }
+  return false;
+}
+
+bool detectLoop2(Node* head){
+  Node *fast = head, *slow = head;
+
+  while(fast && fast->next){
+    fast = fast->next->next;
+    slow = slow->next;
+
+    if(slow == fast) return true;
+  }
+  return false;
+}
+
+int countNodeInLoop(Node* head){
+  Node* fast = head, *slow = head;
+  int count = 1;
+  bool hasLoop = false;
+  while(fast && fast->next){
+    fast = fast->next->next;
+    slow = slow->next;
+    if(slow == fast){
+      hasLoop = true;
+      break;
+    }
+  }
+  if(!hasLoop) return 0;
+
+  while(slow->next != fast){
+    count++;
+    slow = slow->next;
+  }
+  return count;
+}
+
+void removeLoop(Node* head){
+  Node *fast, *slow;
+  fast = slow = head;
+  bool hasLoop = false;
+
+  while(fast&& fast->next){
+    fast = fast->next->next;
+    slow = slow->next;
+    if(slow == fast){
+      hasLoop = true;
+      break;
+    }
+  }
+
+  if(!hasLoop) return;
+  slow = head;
+
+  while(slow != fast){
+    slow = slow->next;
+    fast = fast->next;
+  }
+
+  while(slow->next != fast) slow = slow->next;
+  slow->next = NULL;
+}
+
+void removeLoop2(Node* head){
+  Node *fast, *slow;
+  fast = slow = head;
+  bool hasLoop = false;
+  int count = 1;
+
+  while(fast&& fast->next){
+    fast = fast->next->next;
+    slow = slow->next;
+    if(slow == fast){
+      hasLoop = true;
+      break;
+    }
+  }
+
+  if(!hasLoop) return;
+
+  while(slow->next != fast){
+    count++;
+    slow = slow->next;
+  }
+
+  slow = fast = head;
+  while(count--) fast = fast->next;
+
+  while(slow != fast){
+    slow = slow->next;
+    fast = fast->next;
+  }
+
+  while(slow->next != fast) slow = slow->next;
+  slow->next = NULL;
+}
+
+int intersectionYshaped(Node* head1, Node* head2){
+  Node *t1 = head1, *t2 = head2;
+  int c1 = 0, c2 = 0, diff;
+
+  while(t1){
+    c1++;
+    t1 = t1->next;
+  }
+
+  while(t2){
+    c2++;
+    t2 = t2->next;
+  }
+
+  t1 = head1;
+  t2 = head2;
+
+  if(c1 < c2){
+    diff = c2-c1;
+    while(diff--) t2 = t2->next;
+  }else{
+    diff = c1-c2;
+    while(diff--) t1 = t1->next;
+  }
+
+  while(t1 && t2){
+    if(t1 == t2) return t1->data;
+    t1 = t1->next;
+    t2 = t2->next;
+  }
+
+  return -1;
+}
+
+int intersectionYshaped2(Node* head1, Node* head2) {
+  Node* fast = head1, *slow = head2;
+  while(fast->next) fast = fast->next;
+  fast->next = head1;
+  
+  fast = head2;
+  bool hasLoop = false;
+  while(fast && fast->next){
+    fast = fast->next->next;
+    slow = slow->next;
+    if(slow == fast){
+      hasLoop = true;
+      break;
+    }
+  }
+  if(!hasLoop) return -1;
+  
+  slow = head2;
+  while(slow != fast){
+    slow = slow->next;
+    fast = fast->next;
+  }
+  return slow->data;
+}
+
 int main() {
   // vector<int> arr = {4, 3, 9, 10, 45};
   // List* l = new List(arr);
@@ -343,6 +567,9 @@ int main() {
   n3->next = n4;
   Node* n5 = new Node(50);
   n4->next = n5;
+  Node* n6 = new Node(60);
+  n5->next = n6;
+  n6->next = n3;
 
   // head = deleteOk(head, NULL, head, 5);
 
@@ -350,7 +577,18 @@ int main() {
   // head = rotate(head, 2);
   // head = removeKThNodeFromEnd(head, 2);
   // head = removeKThNodeFromEnd2(head, 2);
-  head = removeEveryKTHNode(head, 2);
+  // head = removeEveryKTHNode(head, 2);
+
+  // Node* temp = head;
+  // while(temp){
+  //   cout<<temp->data<<" ";
+  //   temp = temp->next;
+  // }cout<<endl;
+
+  // cout<<detectLoop(head)<<endl;
+  // cout<<detectLoop2(head)<<endl;
+  // cout<<countNodeInLoop(head)<<endl;
+  removeLoop(head);
 
   Node* temp = head;
   while(temp){
