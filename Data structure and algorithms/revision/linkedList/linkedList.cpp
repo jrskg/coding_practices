@@ -528,6 +528,137 @@ int intersectionYshaped2(Node* head1, Node* head2) {
   return slow->data;
 }
 
+Node* addTwoList(Node* num1, Node* num2){
+  while(num1 && num1->data == 0) num1 = num1->next;
+  while(num2 && num2->data == 0) num2 = num2->next;
+  num1 = reverse(num1);
+  num2 = reverse(num2);
+
+  Node* head = new Node(0);
+  Node* tail = head;
+  int sum, carry = 0;
+
+  while(num1 && num2){
+    sum = carry + num1->data + num2->data;
+    tail->next = new Node(sum % 10);
+    carry = sum / 10;
+    num1 = num1->next;
+    num2 = num2->next;
+    tail = tail->next;
+  }
+
+  while(num1){
+    sum = carry + num1->data;
+    tail->next = new Node(sum % 10);
+    carry = sum / 10;
+    num1 = num1->next;
+    tail = tail->next;
+  }
+
+  while(num2){
+    sum = carry + num2->data;
+    tail->next = new Node(sum % 10);
+    carry = sum / 10;
+    num2 = num2->next;
+    tail = tail->next;
+  }
+
+  if(carry) tail->next = new Node(carry);
+
+  tail = head;
+  head = head->next;
+  delete tail;
+  return reverse(head);
+}
+
+Node* reverseInKGroup(Node* head, int k){
+  vector<Node*> tails, heads;
+  Node* prev = NULL, *curr = head;
+  int count = 0;
+  tails.push_back(curr);
+  while(curr->next){
+    prev = curr;
+    curr = curr->next;
+    count++;
+    if(count == k){
+      count = 0;
+      prev->next = NULL;
+      tails.push_back(curr);
+    }
+  }
+
+  for(int i = 0; i > tails.size(); i++){
+    heads.push_back(reverse(tails[i]));
+  }
+
+  int i = 0, j = 1;
+  while(i < tails.size() - 1){
+    tails[i]->next = heads[j];
+    i++;
+    j++;
+  }
+  return heads[0];
+}
+
+Node* reverseBetween(Node* head, int a, int b){
+  Node* first, *second, *prev, *curr, *next;
+  second = curr = head;
+  prev = new Node(0);
+  prev->next = head;
+  head = prev;
+  b = b-a+1;
+
+  while(--a){
+    first = first->next;
+    second = second->next;
+    curr = curr->next;
+  }
+  prev = first;
+
+  while(b--){
+    next = curr->next;
+    curr->next = prev;
+    prev = curr;
+    curr = next;
+  }
+
+  first->next = prev;
+  second->next = curr;
+  next = head;
+  head = head->next;
+  delete next;
+  return head;
+}
+
+Node* mergeKLists(vector<Node*> &lists){
+  int size = lists.size();
+  if(size == 0) return NULL;
+  if(size == 1) return lists[0];
+
+  Node* head = lists[0];
+  for(int i = 1; i < size; i++){
+    head = mergeTwoSortedList(head, lists[i]);
+  }
+  return head;
+}
+
+//using mergeSort technique****************************************
+void solve(vector<Node*> &lists, int s, int e){
+  if(s >= e) return;
+  int mid = s+(e-s)/2;
+  solve(lists, s, mid);
+  solve(lists, mid+1, e);
+  lists[s] = mergeTwoSortedList(lists[s], lists[e]);
+}
+Node* mergeKLists2(vector<Node*> &lists){
+  int size = lists.size();
+  if(size == 0) return NULL;
+  if(size == 1) return lists[0];
+  solve(lists, 0, size-1);
+  return lists[0];
+}
+//******************************************************************
+
 int main() {
   // vector<int> arr = {4, 3, 9, 10, 45};
   // List* l = new List(arr);
