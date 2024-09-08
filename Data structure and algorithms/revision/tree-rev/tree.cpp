@@ -231,7 +231,7 @@ vector<int>leftView(Node* root){
   bool isFirst = true;
   q.push(root); q.push(NULL);
 
-  while(q.size() != NULL){
+  while(q.size() != 1){
     temp = q.front(); q.pop();
     if(!temp){
       q.push(NULL);
@@ -268,7 +268,7 @@ vector<int>rightView(Node* root){
   bool isFirst = true;
   q.push(root); q.push(NULL);
 
-  while(q.size() != NULL){
+  while(q.size() != 1){
     temp = q.front(); q.pop();
     if(!temp){
       q.push(NULL);
@@ -391,10 +391,136 @@ vector<int> postorderIterative(Node* root){
   return ans;
 }
 
+//********************* Create Tree From InOrder and PreOrder *****************
+Node* solveCreateTreeInPre1(vector<int> &in, vector<int> &pre, int s, int e, int &i){
+  if(s > e) return NULL;
+  int idx = -1;
+  for(int j = s; j <= e; j++){
+    if(pre[i] == in[j]){
+      idx = j;
+      break;
+    }
+  }
+  Node* node = new Node(pre[i++]);
+  node->left = solveCreateTreeInPre1(in, pre, s, idx-1, i);
+  node->right = solveCreateTreeInPre1(in, pre, idx+1, e, i);
+  return node;
+}
+Node* createTreeInPre1(vector<int> &in, vector<int> &pre){
+  int n = in.size();
+  int i = 0;
+  return solveCreateTreeInPre1(in, pre, 0, n-1, i);
+}
+Node* solveCreateTreeInPre2(unordered_map<int, int> &map, vector<int> &pre, int s, int e, int &i){
+  if(s > e) return NULL;
+  int idx = map[pre[i]];
+  Node* node = new Node(pre[i++]);
+  node->left = solveCreateTreeInPre2(map, pre, s, idx-1, i);
+  node->right = solveCreateTreeInPre2(map, pre, idx+1, e, i);
+  return node;
+}
+Node* createTreeInPre2(vector<int> &in, vector<int> &pre){
+  int n = in.size();
+  int i = 0;
+  unordered_map<int, int> map;
+  for(int j = 0; j < n; j++) map[in[j]] = j;
+  return solveCreateTreeInPre2(map, pre, 0, n-1, i);
+}
+//*****************************************************************************
+
+//********************* Create Tree From InOrder and PreOrder *****************
+Node* solveCreateTreeInPost1(vector<int> &in, vector<int> &post, int s, int e, int &i){
+  if(s > e) return NULL;
+  int idx = -1;
+  for(int j = s; j <= e; j++){
+    if(post[i] == in[j]){
+      idx = j;
+      break;
+    }
+  }
+  Node* node = new Node(post[i--]);
+  node->right = solveCreateTreeInPost1(in, post, idx+1, e, i);
+  node->left = solveCreateTreeInPost1(in, post, s, idx-1, i);
+  return node;
+}
+Node* createTreeInPost1(vector<int> &in, vector<int> &post){
+  int n = post.size(), i = n-1;
+  return solveCreateTreeInPost1(in, post, 0, n-1, i);
+}
+
+Node* solveCreateTreeInPost2(unordered_map<int, int> &map, vector<int> &post, int s, int e, int &i){
+  if(s > e) return NULL;
+  int idx = map[post[i]];
+  Node* node = new Node(post[i--]);
+  node->right = solveCreateTreeInPost2(map, post, idx+1, e, i);
+  node->left = solveCreateTreeInPost2(map, post, s, idx-1, i);
+  return node;
+}
+Node* createTreeInPost2(vector<int> &in, vector<int> &post){
+  int n = post.size(), i = n-1;
+  unordered_map<int, int> map;
+  for(int j = 0; j < n; j++) map[in[j]] = j;
+  return solveCreateTreeInPost2(map, post, 0, n-1, i);
+}
+//*****************************************************************************
+
+vector<int> verticalOrder(Node* root){
+  int l = 0, r = 0;
+  minMax(root, 0, l, r);
+  vector<vector<int>> mat(r-l+1, vector<int>());
+  queue<pair<Node*, int>>q;
+  q.push({root, -l});
+  while(!q.empty()){
+    Node* node = q.front().first;
+    int idx = q.front().second;
+    q.pop();
+    mat[idx].push_back(node->data);
+    if(node->left) q.push({node->left, idx-1});
+    if(node->right) q.push({node->right, idx+1});
+  }
+  vector<int> ans;
+  for(int i = 0; i < mat.size(); i++)
+    for(int j = 0; j < mat[i].size(); j++)
+      ans.push_back(mat[i][j]);
+  return ans;
+}
+//*************Boundry Traversal***************************************** 
+void getLeft(Node* root, vector<int> &ans){
+  if(!root || (!root->left && !root->right)) return;
+  ans.push_back(root->data);
+  getLeft(root->left, ans);
+  if(!root->left && root->right) getLeft(root->right, ans);
+}
+void getLeaf(Node* root, vector<int> &ans){
+  if(!root->left && !root->right){
+    ans.push_back(root->data);
+    return;
+  }
+  if(root->left) getLeaf(root->left, ans);
+  if(root->right) getLeaf(root->right, ans);
+}
+void getRight(Node* root, vector<int> &ans){
+  if(!root || (!root->left && !root->right)) return;
+  getRight(root->right, ans);
+  if(!root->right && root->left) getRight(root->left, ans);
+  ans.push_back(root->data);
+}
+vector <int> boundary(Node *root){
+  vector<int> ans;
+  ans.push_back(root->data);
+  if(!root->left && !root->right) return ans;
+  getLeft(root->left, ans);
+  getLeaf(root, ans);
+  getRight(root->right, ans);
+  return ans;
+}
+//***************************************************************************** 
+
 int main() {
-  // vector<int> data = {1,2,3,4,5,6,7,8,-1,9,10,-1,-1,-1,-1};
-  vector<int> data = {1,2,3,4,-1,5,-1,6,-1,-1,-1};
+  vector<int> data = {1,2,3,4,5,6,7,8,-1,9,10,-1,-1,-1,-1};
   Node* root = createTreeLevelOrder(data, NULL);
+  levelOrderTraversal(root);
+  
 
   // levelOrderTraversal(root);
   // inorder(root);
@@ -420,11 +546,35 @@ int main() {
 
   // cout<<isBalanced(root)<<endl;
 
-  vector<int> ans = spiralPrint(root);
-  for(int i = 0; i < ans.size(); i++){
-    cout<<ans[i]<<" ";
-  }
-  cout<<endl;
+  // vector<int> ans = spiralPrint(root);
+  // for(int i = 0; i < ans.size(); i++){
+  //   cout<<ans[i]<<" ";
+  // }
+  // cout<<endl;
+
+  // vector<int> in = {3, 1, 4, 0, 5, 2};
+  // vector<int> pre = {0, 1, 3, 4, 2, 5};
+  // Node* root = createTreeInPre1(in,pre);
+  // Node* root = createTreeInPre2(in,pre);
+  // inorder(root);
+  // postorder(root);
+  // cout<<endl;
+
+  // vector<int> in = {4, 8, 2, 5, 1, 6, 3, 7};
+  // vector<int> post = {8, 4, 5, 2, 6, 7, 3, 1};
+  // Node* root1 = createTreeInPost1(in, post);
+  // Node* root2 = createTreeInPost2(in, post);
+  // preorder(root1);
+  // cout<<endl;
+  // preorder(root2);
+  // cout<<endl;
+
+  // vector<int> ans = verticalOrder(root);
+  // for(int i = 0; i < ans.size(); i++){
+  //   cout<<ans[i]<<" ";
+  // }
+  // cout<<endl;
+
 
   return 0;
 }
