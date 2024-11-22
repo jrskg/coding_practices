@@ -7,7 +7,7 @@ class Node{
   Node *left, *right;
 
   Node(int data){
-    this->data = data, height = 2;
+    this->data = data, height = 1;
     left = right = NULL;
   }
 };
