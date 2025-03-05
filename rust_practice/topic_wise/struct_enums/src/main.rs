@@ -153,44 +153,6 @@ impl BankAccount{
     }
 }
 
-struct Node{
-    data: i32,
-    next: Option<Box<Node>>
-}
-
-impl Node {
-    fn new(data: i32) -> Node{
-        Node{
-            data,
-            next: None
-        }
-    }
-    fn push(&mut self, data: i32){
-        let mut curr = self;
-        while let Some(ref mut next) = curr.next{
-            curr = next;
-        }
-        curr.next = Some(Box::new(Node::new(data)))
-    }
-    fn pop(&mut self) -> Option<i32>{
-        if self.next.is_none(){
-            return None;
-        }
-        let mut curr: &mut Node = self;
-        let mut data: i32;
-        while let Some(ref mut next) = curr.next{
-            if let Some(next2) = next.next{
-                data = next2.data;
-            }
-            else{
-                curr = next;
-            }
-        }
-        
-        Some(curr.data)
-    }
-}
-
 fn main() {
     let mut person = Person {
         name: String::from("Suraj Gupta"),

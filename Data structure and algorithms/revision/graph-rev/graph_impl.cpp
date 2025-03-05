@@ -239,25 +239,489 @@ bool detectCycleDirectedGraphKahnAlgo(int n, unordered_map<int, vector<int>> &ad
   return count != n;
 }
 
-int main() {
-  int n, m;
-  bool isDirected;
-  cout<<"Enter number of vertices(Node) : ";
-  cin>>n;
-  cout<<"Enter number of edges : ";
-  cin>>m;
-  cout<<"Directed or not (1/0) : ";
-  cin>>isDirected;
-  cout<<"Now enter all edges information"<<endl;
+bool isBipartiteBFS(int n, unordered_map<int, vector<int>> &adj){
+  vector<int> color(n, -1);
+  queue<int> q;
 
-  Graph<int>gp;
-  for(int i = 0; i < m; i++){
-    int u, v;
-    cin>>u>>v;
-    gp.addEdge(u, v, isDirected);
+  for(int i = 0; i < n; i++){
+    if(color[i] != -1) continue;
+    color[i] = 0;
+    q.push(i);
+    while(!q.empty()){
+      int node = q.front(); q.pop();
+      for(int j = 0; j < adj[node].size(); j++){
+        if(color[adj[node][j]] == -1){
+          color[adj[node][j]] = color[node] == 0 ? 1 : 0;
+          q.push(adj[node][j]);
+        }
+
+        if(color[adj[node][j]] == color[node]){
+          return false;
+        }
+      }
+    }
   }
 
-  gp.printGraph();
+  return true;
+}
+
+bool isBipartiteDFSSolve(unordered_map<int, vector<int>> &adj, vector<int> &color, int node){
+  bool rem = true;
+  for(int i = 0; i < adj[node].size(); i++){
+    if(color[adj[node][i]] == -1){
+      color[adj[node][i]] = color[node] == 0 ? 1 : 0;
+      rem = rem && isBipartiteDFSSolve(adj, color, adj[node][i]);
+    }
+    if(color[adj[node][i]] == color[node]){
+      return false;
+    }
+  }
+
+  return rem;
+}
+bool isBipartiteDFS(int n, unordered_map<int, vector<int>> &adj){
+  bool ans = true;
+  vector<int> color(n, -1);
+  for(int i = 0; i < n; i++){
+    if(color[i] != -1) continue;
+    color[i] = 0;
+    ans = ans && isBipartiteDFSSolve(adj, color, i);
+  }
+
+  return ans;
+}
+
+bool isIndexValid(int row, int col, int rowN, int colN){
+  return 
+      (row > -1 && row < rowN) &&
+      (col > -1 && col < colN);
+}
+int covidSpread(vector<vector<int>> &hospital){
+  int rowN = hospital.size();
+  int colN = hospital[0].size();
+  int timer = 0;
+  int direction[4][2] = {
+    {0, -1},
+    {0, 1},
+    {-1, 0},
+    {1, 0},
+  };
+  queue<pair<int, int>> q;
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if(hospital[i][j] == 2){
+        q.push({i, j});
+      }
+    }
+  };
+  q.push({-1, -1});
+
+  while(!q.empty()){
+    pair<int, int> node = q.front(); q.pop();
+    if(node.first == -1 && node.second == -1){
+      timer++;
+      if(!q.empty()) q.push({-1, -1});
+    }else{
+      for(int i = 0; i < 4; i++){
+        int newRow = node.first + direction[i][0];
+        int newCol = node.second + direction[i][1];
+        if(isIndexValid(newRow, newCol, rowN, colN) && hospital[newRow][newCol] == 1){
+          q.push({newRow, newCol});
+          hospital[newRow][newCol] = 2;
+        }
+      }
+    }
+  }
+
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if(hospital[i][j] == 1){
+        return -1;
+      }
+    }
+  }
+
+  return timer - 1;
+}
+
+int numIslands(vector<vector<char>> &grid){
+  int rowN = grid.size();
+  int colN = grid[0].size();
+  int count = 0;
+  int direction[8][2] = {
+    {0, -1},
+    {0, 1},
+    {-1, 0},
+    {1, 0},
+    //this is for diagonal
+    {-1, -1},
+    {1, -1},
+    {-1, 1},
+    {1, 1},
+  };
+
+  queue<pair<int, int>> q;
+  // initially i have used a visited array to keep track of visited node but later modified the original grid and changed the visited node from '1' -> '0'
+  // vector<vector<bool>> visited(rowN, vector<bool>(colN, false));
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if(grid[i][j] == '1'){
+        q.push({i, j});
+        grid[i][j] = '0'; //here modifying the original array
+        count++;
+        while(!q.empty()){
+          pair<int, int> node = q.front(); q.pop();
+          for(int k = 0; k < 8; k++){
+            int newRow = node.first + direction[k][0];
+            int newCol = node.second + direction[k][1];
+            if(isIndexValid(newRow, newCol, rowN, colN) && grid[newRow][newCol] == '1'){
+              q.push({newRow, newCol});
+              grid[newRow][newCol] = '0';
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return count;
+}
+
+vector<vector<char>> replaceOwithX(vector<vector<char>> &grid){
+  int rowN = grid.size();
+  int colN = grid[0].size();
+  int direction[4][2] = {
+    {0, -1},
+    {0, 1},
+    {-1, 0},
+    {1, 0},
+  };
+
+  queue<pair<int, int>> q;
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if((i == 0 || j == 0 || i == rowN-1 || j == colN-1) && grid[i][j] == 'O'){
+        q.push({i, j});
+        grid[i][j] = 'T';
+        while(!q.empty()){
+          pair<int, int> node = q.front(); q.pop();
+          for(int k = 0; k < 4; k++){
+            int newRow = node.first + direction[k][0];
+            int newCol = node.second + direction[k][1];
+            if(isIndexValid(newRow, newCol, rowN, colN) && grid[newRow][newCol] == 'O'){
+              q.push({newRow, newCol});
+              grid[newRow][newCol] = 'T';
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if(grid[i][j] == 'O'){
+        grid[i][j] = 'X';
+      }else if(grid[i][j] == 'T'){
+        grid[i][j] = 'O';
+      }
+    }
+  }
+  return grid;
+}
+
+int rottenOranges(vector<vector<int>> &grid){
+  int rowN = grid.size();
+  int colN = grid[0].size();
+  int direction[4][2] = {
+    {0, -1},
+    {0, 1},
+    {-1, 0},
+    {1, 0},
+  };
+  queue<pair<int, int>> q;
+  int timer = 0;
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if(grid[i][j] == 2){
+        q.push({i, j});
+      }
+    }
+  }
+  q.push({-1, -1});
+
+  while(!q.empty()){
+    pair<int, int> node = q.front(); q.pop();
+    if(node.first == -1 && node.second == -1){
+      timer++;
+      if(!q.empty()) q.push({-1, -1});
+    }
+    else{
+      for(int i = 0; i < 4; i++){
+        int newRow = node.first + direction[i][0];
+        int newCol = node.second + direction[i][1];
+        if(isIndexValid(newRow, newCol, rowN, colN) && grid[newRow][newCol] == 1){
+          grid[newRow][newCol] = 2;
+          q.push({newRow, newCol});
+        }
+      }
+    }
+  }
+
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if(grid[i][j] == 1){
+        return -1;
+      }
+    }
+  }
+  return timer - 1;
+}
+
+int totalXShapes(vector<vector<char>> &grid){
+  //same as numIslands but here diagonals are not included
+  int rowN = grid.size();
+  int colN = grid[0].size();
+  queue<pair<int, int>> q;
+  int directions[4][2] = {
+    {0, -1},
+    {0, 1},
+    {-1, 0},
+    {1, 0},
+  };
+  int count = 0;
+
+  for(int i = 0; i < rowN; i++){
+    for(int j = 0; j < colN; j++){
+      if(grid[i][j] == 'X'){
+        q.push({i, j});
+        count++;
+        grid[i][j] = 'O';
+        while(!q.empty()){
+          pair<int, int> node = q.front(); q.pop();
+          for(int k = 0; k < 4; k++){
+            int newRow = node.first + directions[k][0];
+            int newCol = node.second + directions[k][1];
+            if(isIndexValid(newRow, newCol, rowN, colN) && grid[newRow][newCol] == 'X'){
+              q.push({newRow, newCol});
+              grid[newRow][newCol] = 'O';
+            }
+          }
+        }
+      }
+    }
+  }
+  return count;
+}
+
+int numProvinces(vector<vector<int>> &mat){
+  int rowN = mat.size();
+  vector<bool> visited(rowN, false);
+  queue<int> q;
+
+  int ans = 0;
+  for(int i = 0; i < rowN; i++){
+    if(!visited[i]){
+      q.push(i);
+      visited[i] = true;
+      ans++;
+      while(!q.empty()){
+        int node = q.front(); q.pop();
+        for(int j = 0; j < rowN; j++){
+          if(mat[node][j] == 1 && !visited[j]){
+            q.push(j);
+            visited[j] = true;
+          }
+        }
+      }
+    }
+  }
+  return ans;
+}
+
+bool prerequisiteTask(int n, int p, vector<pair<int, int>> &pre){
+  vector<vector<int>> adj(n);
+  vector<int> indeg(n, 0);
+
+  for(int i = 0; i < p; i++){
+    adj[pre[i].second].push_back(pre[i].first);
+    indeg[pre[i].first]++;
+  }
+  queue<int> q;
+  for(int i = 0; i < n; i++){
+    if(indeg[i] == 0){
+      q.push(i);
+    }
+  }
+
+  int count = 0;
+  while(!q.empty()){
+    int node = q.front(); q.pop();
+    count++;
+    for(int i = 0; i < adj[node].size(); i++){
+      indeg[adj[node][i]]--;
+      if(indeg[adj[node][i]] == 0){
+        q.push(adj[node][i]);
+      }
+    }
+  }
+
+  return count == n;
+}
+
+vector<int> findOrder(int n, int m, vector<vector<int>> prerequisites) {
+  vector<vector<int>> adj(n);
+  vector<int> indeg(n, 0);
+  queue<int> q;
+  vector<int> ans;
+  for(int i = 0; i < m; i++){
+    adj[prerequisites[i][1]].push_back(prerequisites[i][0]);
+    indeg[prerequisites[i][0]]++;
+  }
+
+  for(int i = 0; i < n; i++){
+    if(indeg[i] == 0){
+      q.push(i);
+    }
+  }
+
+  while(!q.empty()){
+    int node = q.front(); q.pop();
+    ans.push_back(node);
+    for(int i = 0; i < adj[node].size(); i++){
+      indeg[adj[node][i]]--;
+      if(indeg[adj[node][i]] == 0){
+        q.push(adj[node][i]);
+      }
+    }
+  }
+  if(ans.size() != n) return {};
+  return ans;
+}
+
+bool dfsStr(unordered_map<char, vector<char>> &adj, unordered_map<char, bool> &visited, unordered_map<char, bool> &path, stack<char> &s, char node){
+  visited[node] = true;
+  path[node] = true;
+  for(int i = 0; i < adj[node].size(); i++){
+    if(path[adj[node][i]]) return true;
+    if(visited[adj[node][i]]) continue;
+    if(dfsStr(adj, visited, path, s, adj[node][i])){
+      return true;
+    }
+  }
+  s.push(node);
+  path[node] = false;
+  return false;
+}
+string findOrderAlien(vector<string> &words){
+  //alien's dictionary
+  unordered_map<char, vector<char>> adj;
+  for(int i = 0; i < words.size(); i++){
+    for(int j = 0; j < words[i].size(); j++){
+      adj[words[i][j]];
+    }
+  }
+  for(int i = 0; i < words.size()-1; i++){
+    int j = 0, k = 0;
+    string str1 = words[i], str2 = words[i+1];
+    while(j < str1.size() && k < str2.size()){
+      if(str1[j] != str2[k]){
+        adj[str1[j]].push_back(str2[k]);
+        break;
+      }
+      j++;k++;
+    }
+    if(k >= str2.size() && str1.size() > str2.size()){
+      return "";
+    }
+  }
+  bool isCycle = false;
+  unordered_map<char, bool>visited;
+  unordered_map<char, bool>path;
+  stack<char> s;
+  for(auto c: adj){
+    if(!visited[c.first]){
+      isCycle = isCycle || dfsStr(adj, visited, path, s, c.first);
+    }
+  }
+
+  if(isCycle) return "";
+
+  string ans = "";
+  while(!s.empty()){
+    ans.push_back(s.top());
+    s.pop();
+  }
+
+  return ans;
+}
+
+string findOrderAlienKahn(vector<string> &words){
+  unordered_map<char, vector<char>> adj;
+  unordered_map<char, int> indeg;
+  for(int i = 0; i < words.size(); i++){
+    for(int j = 0; j < words[i].size(); j++){
+      adj[words[i][j]];
+      indeg[words[i][j]] = 0;
+    }
+  }
+  
+  for(int i = 0; i < words.size()-1; i++){
+    string str1 = words[i], str2 = words[i+1];
+    int j = 0, k = 0;
+    while(j < str1.size() && k < str2.size()){
+      if(str1[j] != str2[k]){
+        adj[str1[j]].push_back(str2[k]);
+        indeg[str2[k]]++;
+        break;
+      }
+      j++;k++;
+    }
+    if(k >= str2.size() && str1.size() > str2.size()) return "";
+  }
+
+  queue<char> q;
+  for(auto i:indeg){
+    if(i.second == 0){
+      q.push(i.first);
+    }
+  }
+
+  string ans = "";
+  while(!q.empty()){
+    char node = q.front(); q.pop();
+    ans.push_back(node);
+    for(int i = 0; i < adj[node].size(); i++){
+      indeg[adj[node][i]]--;
+      if(indeg[adj[node][i]] == 0){
+        q.push(adj[node][i]);
+      }
+    }
+  }
+
+  return ans.size() != indeg.size() ? "" : ans;
+}
+
+int main() {
+  // int n, m;
+  // bool isDirected;
+  // cout<<"Enter number of vertices(Node) : ";
+  // cin>>n;
+  // cout<<"Enter number of edges : ";
+  // cin>>m;
+  // cout<<"Directed or not (1/0) : ";
+  // cin>>isDirected;
+  // cout<<"Now enter all edges information"<<endl;
+
+  // Graph<int>gp;
+  // for(int i = 0; i < m; i++){
+  //   int u, v;
+  //   cin>>u>>v;
+  //   gp.addEdge(u, v, isDirected);
+  // }
+
+  // gp.printGraph();
+
   // vector<int>ans = bfsTraversal(n, gp.adjList);
   // vector<int>ans = dfsTravsersal(n, gp.adjList);
   // printVector(ans);
@@ -265,7 +729,56 @@ int main() {
   // cout<<detectCycleInUndirected(n, gp.adjList)<<endl;
 
   // vector<int> topoAns = topologicalSort1(n, gp.adjList);
-  vector<int> topoAns = topologicalSortBFS(n, gp.adjList);
-  printVector(topoAns);
+  // vector<int> topoAns = topologicalSortBFS(n, gp.adjList);
+  // printVector(topoAns);
+
+  // cout<<isBipartiteBFS(n, gp.adjList)<<endl;
+  // cout<<isBipartiteDFS(n, gp.adjList)<<endl;
+
+  // int row, col;
+  // cout<<"Enter row and col : ";
+  // cin>>row>>col;
+  // cout<<"Now enter all element : ";
+  // vector<vector<int>> vec(row, vector<int>(col, 0));
+  // for(int i = 0; i < row; i++){
+  //   for(int j = 0; j < col; j++){
+  //     cin>>vec[i][j];
+  //   }
+  // }
+  // cout<<covidSpread(vec)<<endl;
+
+  // int row, col;
+  // cout<<"Enter row and col : ";
+  // cin>>row>>col;
+  // cout<<"Now enter all element : ";
+  // vector<vector<char>> vec(row, vector<char>(col, 'a'));
+  // for(int i = 0; i < row; i++){
+  //   for(int j = 0; j < col; j++){
+  //     cin>>vec[i][j];
+  //   }
+  // }
+  // cout<<numIslands(vec)<<endl;
+
+  // vector<vector<char>> ans = replaceOwithX(vec);
+  // for(int i = 0; i < row; i++){
+  //   for(int j = 0; j < col; j++){
+  //     cout<<ans[i][j]<<" ";
+  //   }
+  //   cout<<endl;
+  // }
+
+  int row, col;
+  cout<<"Enter row and col : ";
+  cin>>row>>col;
+  cout<<"Now enter all element : ";
+  vector<vector<int>> vec(row, vector<int>(col, 0));
+  for(int i = 0; i < row; i++){
+    for(int j = 0; j < col; j++){
+      cin>>vec[i][j];
+    }
+  }
+
+  cout<<numProvinces(vec)<<endl;
+
   return 0;
 }
