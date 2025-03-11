@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <algorithm>
 using namespace std;
 
 void printVector(vector<int> &v){
@@ -702,6 +703,159 @@ string findOrderAlienKahn(vector<string> &words){
   return ans.size() != indeg.size() ? "" : ans;
 }
 
+int parallelCourse(int n, vector<vector<int>>& relations, vector<int>& time){
+  //minimum time
+  vector<vector<int>> adj(n+1);
+  vector<int> indeg(n+1, 0);
+  vector<int> completionTime(n+1, 0);
+  for(int i = 0; i < relations.size(); i++){
+    adj[relations[i][0]].push_back(relations[i][1]);
+    indeg[relations[i][1]]++;
+  }
+
+  queue<int> q;
+  for(int i = 1; i < n+1; i++){
+    if(indeg[i] == 0){
+      q.push(i);
+    }
+  }
+
+  while(!q.empty()){
+    int node = q.front(); q.pop();
+    for(int i = 0; i < adj[node].size(); i++){
+      indeg[adj[node][i]]--;
+      completionTime[adj[node][i]] = max(completionTime[adj[node][i]], completionTime[node]+time[node-1]);
+      if(indeg[adj[node][i]] == 0){
+        q.push(adj[node][i]);
+      }
+    }
+  }
+  int ans = 0;
+  for(int i = 1; i < n+1; i++){
+    ans = max(ans, completionTime[i] + time[i-1]);
+  }
+  return ans;
+}
+
+vector<int> shortestPath(vector<vector<int>>& adj, int src) {
+  //undirected graph
+  int n = adj.size();
+  vector<int> ans(n, -1);
+  vector<bool> visited(n, false);
+  queue<int> q;
+  q.push(src);
+  visited[src] = true;
+  ans[src] = 0;
+
+  while(!q.empty()){
+    int node = q.front(); q.pop();
+    for(int i = 0; i < adj[node].size(); i++){
+      if(!visited[adj[node][i]]){
+        q.push(adj[node][i]);
+        visited[adj[node][i]] = true;
+        ans[adj[node][i]] = ans[node] + 1;
+      }
+    }
+  }
+
+  return ans;
+}
+
+vector<int> shortestPath(vector<vector<int>>& adj, int src, int dest) {
+  //undirected graph (getting actual path from src to dest)
+  int n = adj.size();
+  vector<int> parent(n, -1);
+  vector<bool> visited(n, false);
+  queue<int> q;
+  q.push(src);
+  visited[src] = true;
+  parent[src] = -1;
+
+  while(!q.empty()){
+    int node = q.front(); q.pop();
+    for(int i = 0; i < adj[node].size(); i++){
+      if(!visited[adj[node][i]]){
+        q.push(adj[node][i]);
+        visited[adj[node][i]] = true;
+        parent[adj[node][i]] = node;
+      }
+    }
+  }
+
+  vector<int> ans;
+  while(dest != -1){
+    ans.push_back(dest);
+    dest = parent[dest];
+  }
+
+  reverse(ans.begin(), ans.end());
+  return ans;
+}
+
+
+vector<int> shortestPathDAG(int V, int E, vector<vector<int>>& edges) {
+  //in directed acyclic graph with weight
+  //NOTE:- It has TLE error
+  vector<pair<int, int>> adj[V];
+  for(int i = 0; i < E; i++){
+    adj[edges[i][0]].push_back({edges[i][1], edges[i][2]});
+  }
+  vector<int> dist(V, -1);
+  queue<int>q;
+  q.push(0);
+  dist[0] = 0;
+  while(!q.empty()){
+    int node = q.front(); q.pop();
+    for(int i = 0; i < adj[node].size(); i++){
+      q.push(adj[node][i].first);
+      if(dist[adj[node][i].first] == -1){
+        dist[adj[node][i].first] = dist[node] + adj[node][i].second;
+      }else{
+        dist[adj[node][i].first] = min(dist[adj[node][i].first], dist[node] + adj[node][i].second);
+      }
+    }
+  }
+  return dist;
+}
+
+void topoDFS(vector<vector<pair<int, int>>> &adj, vector<bool> &visited, stack<int> &s, int node){
+  visited[node] = true;
+  for(int i = 0; i < adj[node].size(); i++){
+    if(!visited[adj[node][i].first]){
+      topoDFS(adj, visited, s, adj[node][i].first);
+    }
+  }
+  s.push(node);
+}
+vector<int> shortestPathDAG2(int V, int E, vector<vector<int>>& edges) {
+  //in directed acyclic graph with weight
+  //NOTE:- OPTIMIZED using TOPOLOGICAL
+  vector<vector<pair<int, int>>> adj(V);
+  for(int i = 0; i < E; i++){
+    adj[edges[i][0]].push_back({edges[i][1], edges[i][2]});
+  }
+  vector<bool>visited(V, false);
+  stack<int> s; //representing topological sort
+  topoDFS(adj, visited, s, 0);
+
+  vector<int> dist(V, __INT_MAX__);
+  dist[s.top()] = 0;
+  while(!s.empty()){
+    int node = s.top(); s.pop();
+    for(int i = 0; i < adj[node].size(); i++){
+      dist[adj[node][i].first] = min(dist[adj[node][i].first], adj[node][i].second + dist[node]);
+    }
+  }
+
+  for(int i = 0; i < V; i++){
+    if(dist[i] == __INT_MAX__){
+      dist[i] = -1;
+    }
+  }
+  
+  return dist;
+}
+
 int main() {
   // int n, m;
   // bool isDirected;
@@ -767,18 +921,24 @@ int main() {
   //   cout<<endl;
   // }
 
-  int row, col;
-  cout<<"Enter row and col : ";
-  cin>>row>>col;
-  cout<<"Now enter all element : ";
-  vector<vector<int>> vec(row, vector<int>(col, 0));
-  for(int i = 0; i < row; i++){
-    for(int j = 0; j < col; j++){
-      cin>>vec[i][j];
-    }
-  }
+  // int row, col;
+  // cout<<"Enter row and col : ";
+  // cin>>row>>col;
+  // cout<<"Now enter all element : ";
+  // vector<vector<int>> vec(row, vector<int>(col, 0));
+  // for(int i = 0; i < row; i++){
+  //   for(int j = 0; j < col; j++){
+  //     cin>>vec[i][j];
+  //   }
+  // }
 
-  cout<<numProvinces(vec)<<endl;
+  // cout<<numProvinces(vec)<<endl;
+
+
+  vector<vector<int>> r = {{2,7},{2,6},{3,6},{4,6},{7,6},{2,1},{3,1},{4,1},{6,1},{7,1},{3,8},{5,8},{7,8},{1,9},{2,9},{6,9},{7,9}};
+  vector<int> time = {9,5,9,5,8,7,7,8,4};
+
+  cout<<parallelCourse(9, r, time)<<endl;
 
   return 0;
 }
