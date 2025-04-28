@@ -1,0 +1,15 @@
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/bin/Debug/net9.0/HelloWorld
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/bin/Debug/net9.0/HelloWorld.deps.json
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/bin/Debug/net9.0/HelloWorld.runtimeconfig.json
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/bin/Debug/net9.0/HelloWorld.dll
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/bin/Debug/net9.0/HelloWorld.pdb
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.GeneratedMSBuildEditorConfig.editorconfig
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.AssemblyInfoInputs.cache
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.AssemblyInfo.cs
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.csproj.CoreCompileInputs.cache
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.sourcelink.json
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.dll
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/refint/HelloWorld.dll
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.pdb
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/HelloWorld.genruntimeconfig.cache
+/home/skg_suraj/Desktop/Coding/dotnet_practice/HelloWorld/obj/Debug/net9.0/ref/HelloWorld.dll
