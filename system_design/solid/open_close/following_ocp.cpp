@@ -1,0 +1,107 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Product{
+public:
+  string name;
+  float price;
+
+  Product(string name, float price){
+    this->name = name;
+    this->price = price;
+  }
+};
+
+class ShoppingCart{
+private:
+  vector<Product> products;
+public:
+  ShoppingCart(){
+    this->products = {};
+  }
+
+  void addProduct(Product *p){
+    this->products.push_back(*p);
+  }
+
+  vector<Product> getProducts(){
+    return this->products;
+  }
+
+  float calculateTotal(){
+    float total = 0;
+    for(auto p : this->products){
+      total += p.price;
+    }
+    return total;
+  }
+
+  void saveToDB(){
+    cout<<"Saving to db"<<endl;
+  }
+};
+
+class CartInvoicePrinter{
+private:
+  ShoppingCart* cart;
+public:
+
+  CartInvoicePrinter(ShoppingCart* c){
+    this->cart = c;
+  }
+  void printInvoice(){
+    for(auto p : this->cart->getProducts()){
+      cout<<p.name<<" "<<p.price<<endl;
+    }
+  }
+};
+
+class CartStorage{
+private:
+  ShoppingCart* cart;
+public:
+  virtual void save(ShoppingCart* c) = 0;
+};
+
+class MongoStorage : public CartStorage{
+public:
+  void save(ShoppingCart* c){
+    cout<<"Saving to mongo"<<endl;
+  }
+};
+
+class SqlStorage : public CartStorage{
+public:
+  void save(ShoppingCart* c){
+    cout<<"Saving to sql"<<endl;
+  }
+};
+
+class FileStorage : public CartStorage{
+public:
+  void save(ShoppingCart* c){
+    cout<<"Saving to file"<<endl;
+  }
+};
+
+
+
+int main() {
+  ShoppingCart *sc = new ShoppingCart();
+  sc->addProduct(new Product("P1", 1000));
+  sc->addProduct(new Product("P2", 2000));
+  sc->addProduct(new Product("P3", 3000));
+  cout<<sc->calculateTotal()<<endl;
+
+  CartInvoicePrinter* p = new CartInvoicePrinter(sc);
+  p->printInvoice();
+  
+  CartStorage* mongo = new MongoStorage();
+  CartStorage* sql = new SqlStorage();
+  CartStorage* file = new FileStorage();
+  mongo->save(sc);
+  file->save(sc);
+  sql->save(sc);
+  return 0;
+}
